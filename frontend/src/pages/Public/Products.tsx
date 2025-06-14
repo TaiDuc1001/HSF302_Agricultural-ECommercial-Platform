@@ -5,7 +5,7 @@ import SearchBar from '../../components/Search/SearchBar';
 import ProductGrid from '../../components/Product/ProductGrid';
 import Pagination from '../../components/Pagination/Pagination';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import { featuredProducts } from '../../data/featuredProducts';
+import { productDetails } from '../../data/productDetails';
 
 const CATEGORIES = ['Produce', 'Seeds', 'Fertilizer', 'Dairy', 'Honey', 'Poultry'];
 const SUGGESTIONS = [
@@ -25,7 +25,7 @@ const SUGGESTIONS = [
   'Organic Wheat',
 ];
 
-const PRODUCTS_PER_PAGE = 8;
+const PRODUCTS_PER_PAGE = 9;
 const COLUMNS = 4;
 
 const Products: React.FC = () => {
@@ -47,25 +47,22 @@ const Products: React.FC = () => {
 
   // Filtered products
   const filteredProducts = useMemo(() => {
-    let products = featuredProducts;
+    let products = productDetails;
     if (search) {
       products = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
     }
     if (selectedCategories.length > 0) {
       products = products.filter(p =>
-        selectedCategories.some(cat => p.name.toLowerCase().includes(cat.toLowerCase()))
+        selectedCategories.some(cat => p.category && p.category.toLowerCase() === cat.toLowerCase())
       );
     }
     if (organicOnly === 'organic') {
-      products = products.filter(p => p.name.toLowerCase().includes('organic'));
+      products = products.filter(p => p.isOrganic);
     } else if (organicOnly === 'non-organic') {
-      products = products.filter(p => !p.name.toLowerCase().includes('organic'));
+      products = products.filter(p => !p.isOrganic);
     }
-    // Price filter (mock: random price for demo)
-    products = products.filter((_, idx) => {
-      const price = 10 + (idx % 5) * 8; // $10, $18, $26, $34, $42
-      return price >= priceRange[0] && price <= priceRange[1];
-    });
+    // Price filter
+    products = products.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
     return products;
   }, [search, selectedCategories, organicOnly, priceRange]);
 

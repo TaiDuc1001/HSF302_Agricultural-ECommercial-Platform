@@ -26,6 +26,7 @@ import { useAuth } from '../context/AuthContext';
 import ProfileBuyer from '../pages/Buyer/Profile';
 import ProfileSeller from '../pages/Seller/Profile';
 import ProductDetail from '../pages/Public/ProductDetail';
+import SellerProfile from '../pages/Public/SellerProfile';
 
 const AppRouter: React.FC = () => (
   <Router>
@@ -45,6 +46,7 @@ const AppRouter: React.FC = () => (
       <Route path="/orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
       <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
       <Route path="/products/:id" element={<ProductDetail />} />
+      <Route path="/sellers/:sellerName" element={<SellerProfile />} />
     </Routes>
     <Footer />
   </Router>
