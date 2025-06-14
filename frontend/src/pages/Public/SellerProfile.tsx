@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { productDetails } from '../../data/productDetails';
+import { products } from '../../data/products';
 import ProductGrid from '../../components/Product/ProductGrid';
-import FilterSidebar from '../../components/SideBar/FilterSidebar';
+import ProductListingFilterSidebar from '../../components/SideBar/ProductListingFilterSidebar';
 import Pagination from '../../components/Pagination/Pagination';
 import SellerCard from '../../components/Seller/SellerCard';
 
@@ -20,7 +20,7 @@ const SellerProfile: React.FC = () => {
   // Pagination
   const [page, setPage] = useState(1);
 
-  const sellerProducts = useMemo(() => productDetails.filter(p => p.seller === seller), [seller]);
+  const sellerProducts = useMemo(() => products.filter(p => p.seller === seller), [seller]);
   const sellerRating = sellerProducts.length
     ? (sellerProducts.reduce((sum, p) => sum + (p.rating || 0), 0) / sellerProducts.length).toFixed(1)
     : '-';
@@ -61,7 +61,7 @@ const SellerProfile: React.FC = () => {
     <div className="flex min-h-screen bg-gray-50">
       {/* Filter Sidebar */}
       <div className="pt-10 pl-8">
-        <FilterSidebar
+        <ProductListingFilterSidebar
           categories={CATEGORIES}
           selectedCategories={selectedCategories}
           onCategoryChange={cat => setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])}

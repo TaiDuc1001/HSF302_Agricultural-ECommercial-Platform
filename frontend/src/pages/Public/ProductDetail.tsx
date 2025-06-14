@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { productDetails } from '../../data/productDetails';
+import { products } from '../../data/products';
 import ProductCarousel from '../../components/ProductCarousel/ProductCarousel';
 import SellerCard from '../../components/Seller/SellerCard';
 
@@ -23,7 +23,7 @@ const renderStars = (rating: number = 0) => {
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const product = productDetails.find(p => p.id === Number(id));
+  const product = products.find(p => p.id === Number(id));
 
   if (!product) {
     return (
@@ -35,11 +35,11 @@ const ProductDetail: React.FC = () => {
   }
 
   // Find related products (same category, not this product)
-  const relatedProducts = productDetails.filter(
+  const relatedProducts = products.filter(
     p => p.category === product.category && p.id !== product.id
   );
   // Seller info
-  const sellerProducts = productDetails.filter(p => p.seller === product.seller);
+  const sellerProducts = products.filter(p => p.seller === product.seller);
   const sellerRating = sellerProducts.length
     ? (sellerProducts.reduce((sum, p) => sum + (p.rating || 0), 0) / sellerProducts.length).toFixed(1)
     : product.rating;

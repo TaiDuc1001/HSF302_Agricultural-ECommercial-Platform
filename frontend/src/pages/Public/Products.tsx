@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import FilterSidebar from '../../components/SideBar/FilterSidebar';
+import ProductListingFilterSidebar from '../../components/SideBar/ProductListingFilterSidebar';
 import SearchBar from '../../components/Search/SearchBar';
 import ProductGrid from '../../components/Product/ProductGrid';
 import Pagination from '../../components/Pagination/Pagination';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import { productDetails } from '../../data/productDetails';
+import { products } from '../../data/products';
 
 const CATEGORIES = ['Produce', 'Seeds', 'Fertilizer', 'Dairy', 'Honey', 'Poultry'];
 const SUGGESTIONS = [
@@ -47,23 +47,23 @@ const Products: React.FC = () => {
 
   // Filtered products
   const filteredProducts = useMemo(() => {
-    let products = productDetails;
+    let filtered = products as typeof products;
     if (search) {
-      products = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
     }
     if (selectedCategories.length > 0) {
-      products = products.filter(p =>
+      filtered = filtered.filter(p =>
         selectedCategories.some(cat => p.category && p.category.toLowerCase() === cat.toLowerCase())
       );
     }
     if (organicOnly === 'organic') {
-      products = products.filter(p => p.isOrganic);
+      filtered = filtered.filter(p => p.isOrganic);
     } else if (organicOnly === 'non-organic') {
-      products = products.filter(p => !p.isOrganic);
+      filtered = filtered.filter(p => !p.isOrganic);
     }
     // Price filter
-    products = products.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
-    return products;
+    filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    return filtered;
   }, [search, selectedCategories, organicOnly, priceRange]);
 
   // Pagination logic
@@ -77,7 +77,7 @@ const Products: React.FC = () => {
     <div className="flex min-h-screen bg-gray-50">
       {/* Filter Sidebar */}
       <div className="pt-10 pl-8">
-        <FilterSidebar
+        <ProductListingFilterSidebar
           categories={CATEGORIES}
           selectedCategories={selectedCategories}
           onCategoryChange={cat => setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])}

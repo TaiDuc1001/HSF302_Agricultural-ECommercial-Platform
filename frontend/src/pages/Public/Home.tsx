@@ -2,7 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import HeroSection from '../../components/HeroSection/HeroSection';
 import ProductCarousel from '../../components/ProductCarousel/ProductCarousel';
-import { featuredProducts } from '../../data/featuredProducts';
+import { products } from '../../data/products';
+
+const featuredProducts = products.filter(p => p.isFeatured);
 
 const Homepage: React.FC = () => (
   <div>

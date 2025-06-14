@@ -1,0 +1,22 @@
+export interface SellerData {
+  seller: string;
+  rating: number;
+  productCount: number;
+  soldCount: number;
+  categories: string[]; // Now supports multiple categories
+}
+
+const sellers: SellerData[] = [
+  { seller: 'Farmer John', rating: 4.5, productCount: 12, soldCount: 200, categories: ['Fruits', 'Vegetables'] },
+  { seller: 'Green Valley Co-op', rating: 4.8, productCount: 30, soldCount: 500, categories: ['Vegetables', 'Grains'] },
+  { seller: 'AgroMart', rating: 3.9, productCount: 20, soldCount: 150, categories: ['Grains'] },
+  { seller: 'Organic Roots', rating: 5, productCount: 15, soldCount: 300, categories: ['Fruits'] },
+  { seller: 'Fresh Fields', rating: 4.2, productCount: 18, soldCount: 220, categories: ['Vegetables'] },
+  { seller: 'Harvest Hub', rating: 4.0, productCount: 10, soldCount: 100, categories: ['Grains', 'Fruits'] },
+  { seller: 'Nature\'s Best', rating: 4.7, productCount: 25, soldCount: 400, categories: ['Fruits', 'Vegetables'] },
+  { seller: 'Farm Fresh', rating: 3.5, productCount: 8, soldCount: 80, categories: ['Vegetables'] },
+  { seller: 'EcoFarm', rating: 4.9, productCount: 22, soldCount: 350, categories: ['Grains', 'Fruits'] },
+  { seller: 'Sunrise Produce', rating: 4.3, productCount: 16, soldCount: 210, categories: ['Fruits'] },
+];
+
+export default sellers;

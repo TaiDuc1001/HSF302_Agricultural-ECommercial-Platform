@@ -3,22 +3,22 @@ import SideBar from './SideBar';
 import CheckList from '../CheckList/CheckList';
 import RadioGroup from '../Radio/RadioGroup';
 import PriceRangeSlider from '../Slider/PriceRangeSlider';
+import categories from '../../data/categories';
 
 interface FilterSidebarProps {
-  categories: string[];
+  categories?: string[];
   selectedCategories: string[];
   onCategoryChange: (cat: string) => void;
   organicOnly: string;
   onOrganicChange: (val: string) => void;
   priceRange: [number, number];
   onPriceRangeChange: (range: [number, number]) => void;
-  // Optionally add more sliders here
   children?: React.ReactNode;
   onApplyFilters?: () => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({
-  categories,
+const ProductListingFilterSidebar: React.FC<FilterSidebarProps> = ({
+  categories: categoriesProp,
   selectedCategories,
   onCategoryChange,
   organicOnly,
@@ -31,7 +31,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   <SideBar>
     <CheckList
       label="Category"
-      options={categories.map(c => ({ label: c, value: c }))}
+      options={(categoriesProp ? categoriesProp.map(c => ({ label: c, value: c })) : categories)}
       selected={selectedCategories}
       onChange={onCategoryChange}
     />
@@ -60,4 +60,4 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   </SideBar>
 );
 
-export default FilterSidebar;
+export default ProductListingFilterSidebar;
