@@ -79,6 +79,7 @@ const SellerProfile: React.FC = () => {
           rating={sellerRating}
           productCount={sellerProducts.length}
           soldCount={sellerSold}
+          showShopNow={false}
         />
         <div className="w-full max-w-6xl">
           <h2 className="text-xl font-bold mb-4">Products by {seller}</h2>

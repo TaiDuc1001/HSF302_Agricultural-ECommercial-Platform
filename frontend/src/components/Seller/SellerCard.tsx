@@ -6,9 +6,10 @@ interface SellerCardProps {
   rating: string | number;
   productCount: number;
   soldCount: number;
+  showShopNow?: boolean;
 }
 
-const SellerCard: React.FC<SellerCardProps> = ({ seller, rating, productCount, soldCount }) => (
+const SellerCard: React.FC<SellerCardProps> = ({ seller, rating, productCount, soldCount, showShopNow = true }) => (
   <div className="w-full max-w-6xl bg-white rounded-lg shadow p-8 flex flex-col md:flex-row items-center gap-8 mb-8">
     <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center text-4xl font-bold text-green-700">
       {seller[0]}
@@ -21,9 +22,11 @@ const SellerCard: React.FC<SellerCardProps> = ({ seller, rating, productCount, s
         <span className="text-base text-gray-700">Total Sold: {soldCount}</span>
       </div>
     </div>
-    <div className="flex-shrink-0 flex items-center justify-center h-full">
-      <Link to={`/sellers/${encodeURIComponent(seller)}`} className="px-6 py-2 bg-green-700 text-white rounded font-semibold hover:bg-green-800 transition whitespace-nowrap">Shop now</Link>
-    </div>
+    {showShopNow && (
+      <div className="flex-shrink-0 flex items-center justify-center h-full">
+        <Link to={`/sellers/${encodeURIComponent(seller)}`} className="px-6 py-2 bg-green-700 text-white rounded font-semibold hover:bg-green-800 transition whitespace-nowrap">Shop now</Link>
+      </div>
+    )}
   </div>
 );
 
