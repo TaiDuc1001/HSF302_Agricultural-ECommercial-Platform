@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="authContext(user)" class="auth-context-component">
+    <script th:inline="javascript">
+        const AuthContext = {
+            user: /*[[${user}]]*/ null,
+            accounts: [
+                { username: 'a', password: 'a', role: 'admin' },
+                { username: 'b', password: 'b', role: 'buyer' },
+                { username: 's', password: 's', role: 'seller' }
+            ],
+            
+            login: async function(username, password) {
+                const found = this.accounts.find(acc => acc.username === username && acc.password === password);
+                if (found) {
+                    this.user = { username: found.username, role: found.role, password: found.password };
+                    sessionStorage.setItem('user', JSON.stringify(this.user));
+                    return 'success';
+                }
+                return 'fail';
+            },
+            
+            logout: function() {
+                this.user = null;
+                sessionStorage.removeItem('user');
+                window.location.href = '/';
+            },
+            
+            register: async function(username, password, role) {
+                if (this.accounts.find(acc => acc.username === username)) {
+                    return 'fail';
+                }
+                const newUser = { username, password, role };
+                this.accounts.push(newUser);
+                this.user = newUser;
+                sessionStorage.setItem('user', JSON.stringify(this.user));
+                return 'success';
+            },
+            
+            getCurrentUser: function() {
+                if (!this.user) {
+                    const storedUser = sessionStorage.getItem('user');
+                    if (storedUser) {
+                        this.user = JSON.parse(storedUser);
+                    }
+                }
+                return this.user;
+            },
+            
+            isAuthenticated: function() {
+                return this.getCurrentUser() !== null;
+            },
+            
+            hasRole: function(role) {
+                const user = this.getCurrentUser();
+                return user && user.role === role;
+            },
+            
+            isAdmin: function() {
+                return this.hasRole('admin');
+            },
+            
+            isBuyer: function() {
+                return this.hasRole('buyer');
+            },
+            
+            isSeller: function() {
+                return this.hasRole('seller');
+            },
+            
+            requireAuth: function() {
+                if (!this.isAuthenticated()) {
+                    window.location.href = '/login';
+                    return false;
+                }
+                return true;
+            },
+            
+            requireRole: function(role) {
+                if (!this.hasRole(role)) {
+                    window.location.href = '/unauthorized';
+                    return false;
+                }
+                return true;
+            }
+        };
+        
+        window.AuthContext = AuthContext;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            AuthContext.getCurrentUser();
+        });
+    </script>
+</div>
+
+</html>
