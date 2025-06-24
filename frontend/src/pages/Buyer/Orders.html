@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:fragment="buyer-orders" class="min-h-screen bg-gray-100 p-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">My Orders</h1>
+                <div class="flex space-x-4">
+                    <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <option value="">All Orders</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="orders-container" class="space-y-4">
+            </div>
+
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 bg-white rounded-lg shadow">
+                <svg class="w-24 h-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No orders found</h3>
+                <p class="text-gray-500">You haven't placed any orders yet. Start shopping to see your orders here!</p>
+                <button onclick="window.location.href='/products'" class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                    Start Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const orders = [
+            {
+                id: 'ORD-001',
+                date: '2024-01-15',
+                status: 'delivered',
+                total: 45.99,
+                items: [
+                    { name: 'Fresh Apples', quantity: 2, price: 5.99, image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=48&h=48' },
+                    { name: 'Organic Carrots', quantity: 1, price: 3.49, image: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=48&h=48' }
+                ],
+                shippingAddress: '123 Main St, City, State 12345',
+                seller: 'Green Farm'
+            },
+            {
+                id: 'ORD-002',
+                date: '2024-01-20',
+                status: 'shipped',
+                total: 29.99,
+                items: [
+                    { name: 'Sweet Bananas', quantity: 3, price: 2.99, image: 'https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=facearea&w=48&h=48' }
+                ],
+                shippingAddress: '123 Main St, City, State 12345',
+                seller: 'Banana Bros'
+            },
+            {
+                id: 'ORD-003',
+                date: '2024-01-22',
+                status: 'pending',
+                total: 18.50,
+                items: [
+                    { name: 'Juicy Oranges', quantity: 2, price: 4.99, image: 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=facearea&w=48&h=48' }
+                ],
+                shippingAddress: '123 Main St, City, State 12345',
+                seller: 'Citrus World'
+            }
+        ];
+
+        function getStatusColor(status) {
+            const colors = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'confirmed': 'bg-blue-100 text-blue-800',
+                'shipped': 'bg-purple-100 text-purple-800',
+                'delivered': 'bg-green-100 text-green-800',
+                'cancelled': 'bg-red-100 text-red-800'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function renderOrders(ordersToRender) {
+            const container = document.getElementById('orders-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (ordersToRender.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.innerHTML = ordersToRender.map(order => `
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Order ${order.id}</h3>
+                            <p class="text-sm text-gray-600">Placed on ${formatDate(order.date)}</p>
+                            <p class="text-sm text-gray-600">Seller: ${order.seller}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}">
+                                ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            </span>
+                            <p class="text-lg font-bold text-gray-800 mt-2">$${order.total.toFixed(2)}</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">Items</h4>
+                        <div class="space-y-2">
+                            ${order.items.map(item => `
+                                <div class="flex items-center space-x-3">
+                                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 rounded object-cover" />
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-800">${item.name}</p>
+                                        <p class="text-sm text-gray-600">Quantity: ${item.quantity}</p>
+                                    </div>
+                                    <p class="font-semibold text-gray-800">$${(item.price * item.quantity).toFixed(2)}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-4 mt-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">Shipping Address</h4>
+                        <p class="text-gray-600">${order.shippingAddress}</p>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 mt-4">
+                        <button onclick="viewOrderDetails('${order.id}')" class="px-4 py-2 border border-green-600 text-green-600 rounded hover:bg-green-50">
+                            View Details
+                        </button>
+                        ${order.status === 'delivered' ? `
+                            <button onclick="reorderItems('${order.id}')" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Reorder
+                            </button>
+                        ` : ''}
+                        ${order.status === 'pending' || order.status === 'confirmed' ? `
+                            <button onclick="cancelOrder('${order.id}')" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                Cancel Order
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterOrders() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const filteredOrders = statusFilter
+                ? orders.filter(order => order.status === statusFilter)
+                : orders;
+            renderOrders(filteredOrders);
+        }
+
+        function viewOrderDetails(orderId) {
+            alert(`Viewing details for order ${orderId}`);
+        }
+
+        function reorderItems(orderId) {
+            alert(`Reordering items from order ${orderId}`);
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm(`Are you sure you want to cancel order ${orderId}?`)) {
+                alert(`Order ${orderId} has been cancelled`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('status-filter').addEventListener('change', filterOrders);
+            renderOrders(orders);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:fragment="buyer-home" class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-8 flex flex-col items-center">
+        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8 mb-8 flex flex-col items-center">
+            <img src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=96" alt="Profile" class="w-24 h-24 rounded-full mb-4 border-4 border-green-200" />
+            <h2 class="text-3xl font-extrabold text-green-800 mb-2">Welcome back, User!</h2>
+            <p class="text-gray-600 mb-6">Manage your account, track your orders, and discover new products tailored for you.</p>
+            <div class="grid grid-cols-3 gap-4 w-full mb-6">
+                <div th:replace="~{components/StatCard :: statcard(3, 'Orders')}"></div>
+                <div th:replace="~{components/StatCard :: statcard(2, 'Cart Items')}"></div>
+                <div th:replace="~{components/StatCard :: statcard(1, 'Pending Review')}"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 w-full mb-4">
+                <div th:replace="~{components/NavCard :: navcard('/orders', 'My Orders', 'bg-green-600 text-white hover:bg-green-700')}"></div>
+                <div th:replace="~{components/NavCard :: navcard('/cart', 'My Cart', 'bg-green-500 text-white hover:bg-green-600')}"></div>
+                <div th:replace="~{components/NavCard :: navcard('/profile', 'Manage Profile', 'bg-green-400 text-white hover:bg-green-500')}"></div>
+                <div th:replace="~{components/NavCard :: navcard('/logout', 'Logout', 'bg-red-400 text-white hover:bg-red-500')}"></div>
+            </div>
+        </div>
+        <div class="w-full max-w-2xl">
+            <h3 class="text-xl font-bold text-green-800 mb-4">Recommended for You</h3>
+            <div class="flex items-center justify-center gap-4">
+                <button id="scroll-left" class="bg-white border border-green-300 text-green-600 px-3 py-2 rounded hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <div id="product-grid" class="grid grid-cols-2 gap-4">
+                </div>
+                <button id="scroll-right" class="bg-white border border-green-300 text-green-600 px-3 py-2 rounded hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const recommendedProducts = [
+            {
+                id: 1,
+                name: 'Fresh Apples',
+                image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=96&h=96',
+                price: 2.99,
+                seller: 'Green Farm',
+                rating: 4.5,
+                solds: 120
+            },
+            {
+                id: 2,
+                name: 'Organic Carrots',
+                image: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=96&h=96',
+                price: 1.49,
+                seller: 'Healthy Roots',
+                rating: 4.2,
+                solds: 80
+            },
+            {
+                id: 3,
+                name: 'Sweet Bananas',
+                image: 'https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=facearea&w=96&h=96',
+                price: 1.99,
+                seller: 'Banana Bros',
+                rating: 4.7,
+                solds: 95
+            },
+            {
+                id: 4,
+                name: 'Juicy Oranges',
+                image: 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=facearea&w=96&h=96',
+                price: 2.49,
+                seller: 'Citrus World',
+                rating: 4.3,
+                solds: 110
+            }
+        ];
+
+        const PRODUCTS_PER_VIEW = 2;
+        let startIdx = 0;
+
+        function updateProductDisplay() {
+            const productGrid = document.getElementById('product-grid');
+            const scrollLeft = document.getElementById('scroll-left');
+            const scrollRight = document.getElementById('scroll-right');
+            
+            const visibleProducts = recommendedProducts.slice(startIdx, startIdx + PRODUCTS_PER_VIEW);
+            
+            productGrid.innerHTML = visibleProducts.map(product => `
+                <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover rounded mb-3" />
+                    <h4 class="font-semibold text-gray-800 mb-1">${product.name}</h4>
+                    <p class="text-sm text-gray-600 mb-2">by ${product.seller}</p>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-lg font-bold text-green-600">$${product.price.toFixed(2)}</span>
+                        <div class="flex items-center gap-1">
+                            <span class="text-yellow-400">★</span>
+                            <span class="text-sm text-gray-600">${product.rating}</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500">${product.solds} sold</p>
+                </div>
+            `).join('');
+            
+            scrollLeft.disabled = startIdx <= 0;
+            scrollRight.disabled = startIdx + PRODUCTS_PER_VIEW >= recommendedProducts.length;
+        }
+
+        function handleLeft() {
+            startIdx = Math.max(0, startIdx - PRODUCTS_PER_VIEW);
+            updateProductDisplay();
+        }
+
+        function handleRight() {
+            startIdx = Math.min(recommendedProducts.length - PRODUCTS_PER_VIEW, startIdx + PRODUCTS_PER_VIEW);
+            updateProductDisplay();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('scroll-left').addEventListener('click', handleLeft);
+            document.getElementById('scroll-right').addEventListener('click', handleRight);
+            updateProductDisplay();
+        });
+    </script>
+</body>
+</html>

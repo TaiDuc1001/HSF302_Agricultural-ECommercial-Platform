@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:fragment="product-detail" class="min-h-screen bg-gray-50">
+        <div id="product-not-found" class="hidden flex flex-col items-center justify-center min-h-screen">
+            <div class="text-center">
+                <svg class="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.26-5.66-3.09l-.84 1.09A9.967 9.967 0 002 12C2 6.477 6.477 2 12 2s10 4.477 10 10a9.967 9.967 0 01-3.5 7.69l-.84-1.09C19.29 16.74 21.26 14.34 21.26 12"></path>
+                </svg>
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">Product Not Found</h1>
+                <p class="text-gray-600 mb-6">The product you're looking for doesn't exist or has been removed.</p>
+                <a href="/products" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                    Browse All Products
+                </a>
+            </div>
+        </div>
+
+        <div id="product-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <nav class="mb-8">
+                <ol class="flex items-center space-x-2 text-sm text-gray-500">
+                    <li><a href="/" class="hover:text-green-600">Home</a></li>
+                    <li>/</li>
+                    <li><a href="/products" class="hover:text-green-600">Products</a></li>
+                    <li>/</li>
+                    <li id="breadcrumb-category" class="text-gray-900"></li>
+                    <li>/</li>
+                    <li id="breadcrumb-product" class="text-gray-900"></li>
+                </ol>
+            </nav>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+                <div>
+                    <img id="product-image" src="" alt="" class="w-full h-96 object-cover rounded-lg shadow-lg mb-4" />
+                    <div class="grid grid-cols-4 gap-2">
+                    </div>
+                </div>
+
+                <div>
+                    <h1 id="product-name" class="text-3xl font-bold text-gray-900 mb-4"></h1>
+                    
+                    <div class="flex items-center mb-4">
+                        <div id="product-rating" class="flex items-center mr-4"></div>
+                        <span id="product-rating-text" class="text-gray-600 mr-4"></span>
+                        <span id="product-sold" class="text-sm text-gray-500"></span>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <span id="product-price" class="text-3xl font-bold text-green-600"></span>
+                        <span id="product-stock" class="ml-4 text-sm text-gray-500"></span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+                        <div>
+                            <span class="text-gray-700">Seller: </span>
+                            <a id="product-seller-link" href="#" class="font-semibold text-green-600 hover:text-green-700"></a>
+                        </div>
+                        <div>
+                            <span class="text-gray-700">Category: </span>
+                            <span id="product-category" class="font-semibold"></span>
+                        </div>
+                        <div>
+                            <span class="text-gray-700">Origin: </span>
+                            <span id="product-origin" class="font-semibold"></span>
+                        </div>
+                        <div>
+                            <span class="text-gray-700">Weight: </span>
+                            <span id="product-weight" class="font-semibold"></span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-gray-700">Type: </span>
+                            <span id="product-organic" class="font-semibold"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Description</h3>
+                        <p id="product-description" class="text-gray-700 leading-relaxed"></p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 mb-8">
+                        <div class="flex items-center">
+                            <label for="quantity" class="block text-sm font-medium text-gray-700 mr-2">Quantity:</label>
+                            <input type="number" id="quantity" name="quantity" min="1" max="10" value="1" class="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                        </div>
+                        <button onclick="addToCart()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-semibold transition-colors">
+                            Add to Cart
+                        </button>
+                        <button onclick="buyNow()" class="bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 font-semibold transition-colors">
+                            Buy Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-12">
+                <div id="seller-card-container" class="bg-white rounded-lg shadow-md p-6">
+                </div>
+            </div>
+
+            <div id="related-products" class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
+                <div id="related-products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Customer Reviews</h2>
+                    <div class="flex space-x-2">
+                        <button onclick="filterReviews('all')" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors active">All</button>
+                        <button onclick="filterReviews(5)" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors">5 Stars</button>
+                        <button onclick="filterReviews(4)" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors">4 Stars</button>
+                        <button onclick="filterReviews(3)" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors">3 Stars</button>
+                        <button onclick="filterReviews(2)" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors">2 Stars</button>
+                        <button onclick="filterReviews(1)" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors">1 Star</button>
+                    </div>
+                </div>
+                
+                <div id="reviews-container" class="space-y-4">
+                    <p class="text-gray-500 text-center py-8">No reviews yet. Be the first to review this product!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/data/products.js"></script>
+    <script>
+        let currentProduct = null;
+        let currentFilter = 'all';
+
+        function renderStars(rating = 0) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                const filled = i <= Math.round(rating);
+                stars += `<svg class="w-5 h-5 inline ${filled ? 'text-yellow-400' : 'text-gray-300'}" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" />
+                </svg>`;
+            }
+            return stars;
+        }
+
+        function loadProduct() {
+            const pathParts = window.location.pathname.split('/');
+            const productId = parseInt(pathParts[pathParts.length - 1]);
+            
+            if (!window.productsData) {
+                document.getElementById('product-not-found').classList.remove('hidden');
+                document.getElementById('product-content').classList.add('hidden');
+                return;
+            }
+
+            currentProduct = window.productsData.find(p => p.id === productId);
+            
+            if (!currentProduct) {
+                document.getElementById('product-not-found').classList.remove('hidden');
+                document.getElementById('product-content').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('breadcrumb-category').textContent = currentProduct.category;
+            document.getElementById('breadcrumb-product').textContent = currentProduct.name;
+            document.getElementById('product-image').src = currentProduct.image;
+            document.getElementById('product-image').alt = currentProduct.name;
+            document.getElementById('product-name').textContent = currentProduct.name;
+            document.getElementById('product-rating').innerHTML = renderStars(currentProduct.rating);
+            document.getElementById('product-rating-text').textContent = `(${currentProduct.rating || 0})`;
+            document.getElementById('product-sold').textContent = `${currentProduct.solds || 0} sold`;
+            document.getElementById('product-price').textContent = `$${currentProduct.price.toFixed(2)}`;
+            document.getElementById('product-stock').textContent = `Stock: ${currentProduct.stock || 0}`;
+            document.getElementById('product-seller-link').textContent = currentProduct.seller;
+            document.getElementById('product-seller-link').href = `/sellers/${encodeURIComponent(currentProduct.seller)}`;
+            document.getElementById('product-category').textContent = currentProduct.category;
+            document.getElementById('product-origin').textContent = currentProduct.origin || 'Unknown';
+            document.getElementById('product-weight').textContent = currentProduct.weight || 'N/A';
+            document.getElementById('product-organic').textContent = currentProduct.isOrganic ? 'Organic' : 'Non-Organic';
+            document.getElementById('product-description').textContent = currentProduct.description || 'No description available.';
+            
+            renderSellerCard();
+            renderRelatedProducts();
+            renderReviews();
+        }
+
+        function renderSellerCard() {
+            const sellerProducts = window.productsData.filter(p => p.seller === currentProduct.seller);
+            const sellerRating = sellerProducts.length 
+                ? (sellerProducts.reduce((sum, p) => sum + (p.rating || 0), 0) / sellerProducts.length).toFixed(1)
+                : currentProduct.rating;
+            const sellerSold = sellerProducts.reduce((sum, p) => sum + (p.solds || 0), 0);
+            
+            document.getElementById('seller-card-container').innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(currentProduct.seller)}&background=34d399&color=fff&size=64" alt="${currentProduct.seller}" class="w-16 h-16 rounded-full" />
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">${currentProduct.seller}</h3>
+                            <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                <span>Rating: ${sellerRating}</span>
+                                <span>Products: ${sellerProducts.length}</span>
+                                <span>Sold: ${sellerSold}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/sellers/${encodeURIComponent(currentProduct.seller)}" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                        Visit Store
+                    </a>
+                </div>
+            `;
+        }
+
+        function renderRelatedProducts() {
+            const relatedProducts = window.productsData.filter(
+                p => p.category === currentProduct.category && p.id !== currentProduct.id
+            ).slice(0, 4);
+            
+            if (relatedProducts.length === 0) {
+                document.getElementById('related-products').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('related-products-grid').innerHTML = relatedProducts.map(product => `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover" />
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">${product.name}</h3>
+                        <p class="text-sm text-gray-600 mb-2">by ${product.seller}</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-lg font-bold text-green-600">$${product.price.toFixed(2)}</span>
+                            <div class="flex items-center">
+                                <span class="text-yellow-400">★</span>
+                                <span class="text-sm text-gray-600 ml-1">${product.rating || 0}</span>
+                            </div>
+                        </div>
+                        <a href="/products/${product.id}" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-center block transition-colors">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderReviews() {
+            const reviews = currentProduct.reviews || [];
+            const container = document.getElementById('reviews-container');
+            
+            if (reviews.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No reviews yet. Be the first to review this product!</p>';
+                return;
+            }
+            
+            const filteredReviews = currentFilter === 'all' 
+                ? reviews 
+                : reviews.filter(review => review.rating === currentFilter);
+            
+            if (filteredReviews.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No reviews found for the selected rating.</p>';
+                return;
+            }
+            
+            container.innerHTML = filteredReviews.map(review => `
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <span class="font-semibold text-gray-900 mr-3">${review.user}</span>
+                            <div class="flex">${renderStars(review.rating)}</div>
+                        </div>
+                        <span class="text-sm text-gray-500">${review.date || 'Recent'}</span>
+                    </div>
+                    <p class="text-gray-700">${review.comment}</p>
+                </div>
+            `).join('');
+        }
+
+        function filterReviews(rating) {
+            currentFilter = rating;
+            
+            document.querySelectorAll('[onclick^="filterReviews"]').forEach(btn => {
+                btn.classList.remove('bg-green-600', 'text-white');
+                btn.classList.add('bg-gray-200');
+            });
+            
+            event.target.classList.remove('bg-gray-200');
+            event.target.classList.add('bg-green-600', 'text-white');
+            
+            renderReviews();
+        }
+
+        function addToCart() {
+            const quantity = parseInt(document.getElementById('quantity').value);
+            alert(`Added ${quantity} ${currentProduct.name}(s) to cart!`);
+        }
+
+        function buyNow() {
+            const quantity = parseInt(document.getElementById('quantity').value);
+            alert(`Proceeding to checkout with ${quantity} ${currentProduct.name}(s)`);
+            window.location.href = '/checkout';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProduct();
+        });
+    </script>
+</body>
+</html>

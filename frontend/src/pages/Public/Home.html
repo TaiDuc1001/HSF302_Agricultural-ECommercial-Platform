@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriMarket - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:fragment="public-home">
+        <div th:replace="~{components/HeroSection :: hero-section}"></div>
+        
+        <div class="py-12 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
+                    <p class="text-gray-600">Discover the best agricultural products from our trusted sellers</p>
+                </div>
+                
+                <div class="relative">
+                    <div class="flex items-center justify-center gap-4">
+                        <button id="carousel-prev" class="bg-white border border-green-300 text-green-600 p-3 rounded-full hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-md">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <div id="product-carousel" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl">
+                        </div>
+                        
+                        <button id="carousel-next" class="bg-white border border-green-300 text-green-600 p-3 rounded-full hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed shadow-md">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <a href="/products" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-semibold transition-colors">
+                        View All Products
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Choose AgriMarket?</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">We connect you directly with local farmers and agricultural producers for the freshest, highest quality products.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Fresh & Quality</h3>
+                        <p class="text-gray-600">Direct from farm to your table, ensuring maximum freshness and quality.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Local Community</h3>
+                        <p class="text-gray-600">Support local farmers and strengthen your community's agricultural economy.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Trusted & Secure</h3>
+                        <p class="text-gray-600">Verified sellers and secure transactions for your peace of mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="py-16 bg-green-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Ready to Get Started?</h2>
+                        <p class="text-gray-600 mb-8">Join thousands of satisfied customers who trust AgriMarket for their agricultural needs. Browse our marketplace or become a seller today.</p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="/products" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold text-center transition-colors">
+                                Browse Products
+                            </a>
+                            <a href="/sellers" class="bg-white border border-green-600 text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 font-semibold text-center transition-colors">
+                                Meet Our Sellers
+                            </a>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=500&h=300" alt="Farm landscape" class="rounded-lg shadow-lg" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/data/products.js"></script>
+    <script>
+        let currentStartIndex = 0;
+        const PRODUCTS_PER_VIEW = 4;
+        let featuredProducts = [];
+
+        function loadFeaturedProducts() {
+            featuredProducts = window.productsData ? window.productsData.filter(p => p.isFeatured) : [];
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const carousel = document.getElementById('product-carousel');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            
+            if (!carousel || featuredProducts.length === 0) return;
+            
+            const visibleProducts = featuredProducts.slice(currentStartIndex, currentStartIndex + PRODUCTS_PER_VIEW);
+            
+            carousel.innerHTML = visibleProducts.map(product => `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover" />
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">${product.name}</h3>
+                        <p class="text-sm text-gray-600 mb-2">by ${product.seller}</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-lg font-bold text-green-600">$${product.price.toFixed(2)}</span>
+                            <div class="flex items-center">
+                                <span class="text-yellow-400">★</span>
+                                <span class="text-sm text-gray-600 ml-1">${product.rating || 0}</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-3">${product.solds || 0} sold</p>
+                        <a href="/products/${product.id}" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-center block transition-colors">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+            
+            prevBtn.disabled = currentStartIndex <= 0;
+            nextBtn.disabled = currentStartIndex + PRODUCTS_PER_VIEW >= featuredProducts.length;
+        }
+
+        function goToPrevious() {
+            currentStartIndex = Math.max(0, currentStartIndex - PRODUCTS_PER_VIEW);
+            updateCarousel();
+        }
+
+        function goToNext() {
+            currentStartIndex = Math.min(featuredProducts.length - PRODUCTS_PER_VIEW, currentStartIndex + PRODUCTS_PER_VIEW);
+            updateCarousel();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeaturedProducts();
+            
+            document.getElementById('carousel-prev').addEventListener('click', goToPrevious);
+            document.getElementById('carousel-next').addEventListener('click', goToNext);
+        });
+    </script>
+</body>
+</html>

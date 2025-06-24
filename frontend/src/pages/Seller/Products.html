@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:fragment="seller-products" class="min-h-screen bg-gray-100 p-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">Product Management</h1>
+                <div class="flex space-x-4">
+                    <select id="category-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <option value="">All Categories</option>
+                        <option value="Produce">Produce</option>
+                        <option value="Seeds">Seeds</option>
+                        <option value="Fertilizer">Fertilizer</option>
+                        <option value="Dairy">Dairy</option>
+                        <option value="Honey">Honey</option>
+                        <option value="Poultry">Poultry</option>
+                    </select>
+                    <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="out-of-stock">Out of Stock</option>
+                    </select>
+                    <button onclick="openAddProductModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        Add New Product
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Total Products</p>
+                            <p class="text-2xl font-bold text-gray-800">24</p>
+                        </div>
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Active</p>
+                            <p class="text-2xl font-bold text-green-600">20</p>
+                        </div>
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Out of Stock</p>
+                            <p class="text-2xl font-bold text-red-600">3</p>
+                        </div>
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.634 0L5.098 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Total Revenue</p>
+                            <p class="text-2xl font-bold text-purple-600">$12.5K</p>
+                        </div>
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div id="products-container" class="space-y-4 mb-8">
+            </div>
+
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 bg-white rounded-lg shadow">
+                <svg class="w-24 h-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"></path>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+                <p class="text-gray-500 mb-4">You haven't added any products yet or no products match your current filters.</p>
+                <button onclick="openAddProductModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                    Add Your First Product
+                </button>
+            </div>
+
+            <div class="flex justify-center space-x-4 mt-8">
+                <a href="/my-orders" class="text-green-700 underline hover:text-green-900">View Orders</a>
+                <a href="/content" class="text-green-700 underline hover:text-green-900">Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div id="add-product-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Add New Product</h3>
+                        <button onclick="closeAddProductModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="add-product-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                            <input type="text" id="product-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select id="product-category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                                <option value="">Select Category</option>
+                                <option value="Produce">Produce</option>
+                                <option value="Seeds">Seeds</option>
+                                <option value="Fertilizer">Fertilizer</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Honey">Honey</option>
+                                <option value="Poultry">Poultry</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
+                            <input type="number" id="product-price" step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label>
+                            <input type="number" id="product-stock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea id="product-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button type="submit" class="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
+                                Add Product
+                            </button>
+                            <button type="button" onclick="closeAddProductModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            {
+                id: 1,
+                name: 'Organic Rice',
+                category: 'Produce',
+                price: 12.99,
+                stock: 100,
+                status: 'active',
+                description: 'Premium organic rice grown without pesticides',
+                image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=facearea&w=96&h=96',
+                sales: 45,
+                revenue: 584.55
+            },
+            {
+                id: 2,
+                name: 'Fresh Corn',
+                category: 'Produce',
+                price: 8.50,
+                stock: 50,
+                status: 'active',
+                description: 'Sweet, fresh corn harvested daily',
+                image: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=facearea&w=96&h=96',
+                sales: 32,
+                revenue: 272.00
+            },
+            {
+                id: 3,
+                name: 'Organic Fertilizer',
+                category: 'Fertilizer',
+                price: 25.99,
+                stock: 0,
+                status: 'out-of-stock',
+                description: 'Natural organic fertilizer for healthy plant growth',
+                image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=facearea&w=96&h=96',
+                sales: 15,
+                revenue: 389.85
+            },
+            {
+                id: 4,
+                name: 'Farm Fresh Eggs',
+                category: 'Poultry',
+                price: 6.99,
+                stock: 25,
+                status: 'active',
+                description: 'Free-range chicken eggs from happy hens',
+                image: 'https://images.unsplash.com/photo-1518569656558-1f25e69d93d7?auto=format&fit=facearea&w=96&h=96',
+                sales: 68,
+                revenue: 475.32
+            }
+        ];
+
+        function getStatusColor(status) {
+            const colors = {
+                'active': 'bg-green-100 text-green-800',
+                'inactive': 'bg-gray-100 text-gray-800',
+                'out-of-stock': 'bg-red-100 text-red-800'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function renderProducts(productsToRender) {
+            const container = document.getElementById('products-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (productsToRender.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.innerHTML = productsToRender.map(product => `
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center space-x-6">
+                        <img src="${product.image}" alt="${product.name}" class="w-20 h-20 rounded-lg object-cover" />
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800">${product.name}</h3>
+                                    <p class="text-sm text-gray-600">${product.category}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(product.status)}">
+                                    ${product.status.charAt(0).toUpperCase() + product.status.slice(1).replace('-', ' ')}
+                                </span>
+                            </div>
+                            <p class="text-gray-700 mb-3">${product.description}</p>
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Price</p>
+                                    <p class="font-semibold text-green-600">$${product.price.toFixed(2)}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Stock</p>
+                                    <p class="font-semibold ${product.stock === 0 ? 'text-red-600' : 'text-gray-800'}">${product.stock}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Sales</p>
+                                    <p class="font-semibold text-gray-800">${product.sales}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Revenue</p>
+                                    <p class="font-semibold text-gray-800">$${product.revenue.toFixed(2)}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col space-y-2">
+                            <button onclick="editProduct(${product.id})" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Edit
+                            </button>
+                            <button onclick="toggleProductStatus(${product.id})" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+                                ${product.status === 'active' ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button onclick="deleteProduct(${product.id})" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts() {
+            const categoryFilter = document.getElementById('category-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            let filteredProducts = products;
+            
+            if (categoryFilter) {
+                filteredProducts = filteredProducts.filter(product => product.category === categoryFilter);
+            }
+            
+            if (statusFilter) {
+                filteredProducts = filteredProducts.filter(product => product.status === statusFilter);
+            }
+            
+            renderProducts(filteredProducts);
+        }
+
+        function openAddProductModal() {
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        function closeAddProductModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+            document.getElementById('add-product-form').reset();
+        }
+
+        function addProduct(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('product-name').value;
+            const category = document.getElementById('product-category').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const stock = parseInt(document.getElementById('product-stock').value);
+            const description = document.getElementById('product-description').value;
+            
+            const newProduct = {
+                id: products.length + 1,
+                name,
+                category,
+                price,
+                stock,
+                status: stock > 0 ? 'active' : 'out-of-stock',
+                description,
+                image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=96&h=96',
+                sales: 0,
+                revenue: 0
+            };
+            
+            products.push(newProduct);
+            closeAddProductModal();
+            filterProducts();
+            alert('Product added successfully!');
+        }
+
+        function editProduct(productId) {
+            alert(`Edit functionality for product ${productId} would be implemented here`);
+        }
+
+        function toggleProductStatus(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                product.status = product.status === 'active' ? 'inactive' : 'active';
+                filterProducts();
+                alert(`Product ${product.name} has been ${product.status === 'active' ? 'activated' : 'deactivated'}`);
+            }
+        }
+
+        function deleteProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product && confirm(`Are you sure you want to delete ${product.name}?`)) {
+                const index = products.findIndex(p => p.id === productId);
+                products.splice(index, 1);
+                filterProducts();
+                alert('Product deleted successfully!');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('category-filter').addEventListener('change', filterProducts);
+            document.getElementById('status-filter').addEventListener('change', filterProducts);
+            document.getElementById('add-product-form').addEventListener('submit', addProduct);
+            renderProducts(products);
+        });
+    </script>
+</body>
+</html>
