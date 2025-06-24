@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriMarket - Agricultural E-Commerce Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/logo192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/logo512.png" />
+    <meta name="description" content="Agricultural E-Commerce Platform connecting farmers, buyers, and sellers" />
+    <meta name="theme-color" content="#059669" />
+</head>
+<body class="font-sans">
+    <div id="root">
+        <div id="app-container">
+            <div id="loading-screen" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                    <p class="text-gray-600">Loading AgriMarket...</p>
+                </div>
+            </div>
+            <div id="app-content" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div th:replace="~{context/AuthContext :: authContext}"></div>
+    <div th:replace="~{data/categories :: categoriesData}"></div>
+    <div th:replace="~{data/products :: productsData}"></div>
+    <div th:replace="~{data/sellers :: sellersData}"></div>
+
+    <script th:inline="javascript">
+        const App = {
+            initialized: false,
+
+            async init() {
+                if (this.initialized) return;
+                
+                try {
+                    await this.loadAuthContext();
+                    await this.loadAppRouter();
+                    await this.setupGlobalErrorHandling();
+                    
+                    this.hideLoadingScreen();
+                    this.initialized = true;
+                } catch (error) {
+                    console.error('App initialization failed:', error);
+                    this.showErrorScreen();
+                }
+            },
+
+            async loadAuthContext() {
+                if (typeof AuthContext !== 'undefined') {
+                    AuthContext.init();
+                }
+            },
+
+            async loadAppRouter() {
+                try {
+                    const response = await fetch('/router/app-router');
+                    const html = await response.text();
+                    document.getElementById('app-content').innerHTML = html;
+                    
+                    if (window.AppRouter && typeof window.AppRouter.init === 'function') {
+                        window.AppRouter.init();
+                    }
+                } catch (error) {
+                    console.error('Error loading router:', error);
+                    throw error;
+                }
+            },
+
+            setupGlobalErrorHandling() {
+                window.addEventListener('error', (event) => {
+                    console.error('Global error:', event.error);
+                });
+
+                window.addEventListener('unhandledrejection', (event) => {
+                    console.error('Unhandled promise rejection:', event.reason);
+                });
+            },
+
+            hideLoadingScreen() {
+                const loadingScreen = document.getElementById('loading-screen');
+                const appContent = document.getElementById('app-content');
+                
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
+                if (appContent) {
+                    appContent.style.display = 'block';
+                }
+            },
+
+            showErrorScreen() {
+                const appContainer = document.getElementById('app-container');
+                if (appContainer) {
+                    appContainer.innerHTML = `
+                        <div class="min-h-screen flex items-center justify-center bg-gray-50">
+                            <div class="text-center">
+                                <div class="mb-4">
+                                    <svg class="w-16 h-16 mx-auto text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h1 class="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
+                                <p class="text-gray-600 mb-6">We're having trouble loading the application.</p>
+                                <button onclick="window.location.reload()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+                                    Try Again
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+
+            reload() {
+                window.location.reload();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            App.init();
+        });
+
+        window.App = App;
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Route</title>
+</head>
+<body>
+    <div th:fragment="adminRoute" id="admin-route-container">
+        <div id="admin-content"></div>
+    </div>
+
+    <script th:inline="javascript">
+        const AdminRoute = {
+            init(contentLoader) {
+                const user = AuthContext.getCurrentUser();
+                const currentLocation = window.location.pathname;
+
+                if (!user) {
+                    localStorage.setItem('redirectAfterLogin', currentLocation);
+                    window.location.href = '/login';
+                    return false;
+                }
+
+                if (user.role !== 'admin') {
+                    window.location.href = '/';
+                    return false;
+                }
+
+                if (contentLoader && typeof contentLoader === 'function') {
+                    contentLoader();
+                }
+                return true;
+            },
+
+            loadContent(html) {
+                const container = document.getElementById('admin-content');
+                if (container) {
+                    container.innerHTML = html;
+                }
+            },
+
+            checkAdminAccess() {
+                const user = AuthContext.getCurrentUser();
+                return user && user.role === 'admin';
+            },
+
+            redirectUnauthorized() {
+                const user = AuthContext.getCurrentUser();
+                if (!user) {
+                    localStorage.setItem('redirectAfterLogin', window.location.pathname);
+                    window.location.href = '/login';
+                } else {
+                    window.location.href = '/';
+                }
+            }
+        };
+
+        window.AdminRoute = AdminRoute;
+    </script>
+</body>
+</html>
