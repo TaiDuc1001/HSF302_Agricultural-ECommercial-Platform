@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<section th:fragment="slideshow(slides, slideDuration, fadeDuration, className, controls)" 
+         th:class="${'relative w-full overflow-hidden ' + (className ?: '')}"
+         style="height: 500px;"
+         aria-label="slideshow"
+         onmouseenter="pauseSlideshow()"
+         onmouseleave="resumeSlideshow()"
+         ontouchstart="pauseSlideshow()"
+         ontouchend="resumeSlideshow()">
+    
+    <div th:each="slide, iterStat : ${slides}"
+         th:class="${'absolute inset-0 transition-opacity slide-item'}"
+         th:style="'transition-duration: ' + ${fadeDuration ?: 1500} + 'ms'"
+         th:data-index="${iterStat.index}"
+         th:aria-hidden="${iterStat.index != 0}">
+        <img th:src="${slide.image}" 
+             th:alt="${slide.alt ?: 'Slide image'}" 
+             class="w-full h-full object-cover" />
+        <div th:if="${slide.content != null}" 
+             th:utext="${slide.content}">
+        </div>
+    </div>
+    
+    <div th:if="${controls == null or controls == true}">
+        <div th:replace="~{components/ArrowButton :: arrowButton('left', 'filled', 'left-4 absolute top-1/2 -translate-y-1/2 z-20 hidden md:block', 'goToPrevSlide()', false, 'Previous slide')}"></div>
+        
+        <div th:replace="~{components/ArrowButton :: arrowButton('right', 'filled', 'right-4 absolute top-1/2 -translate-y-1/2 z-20 hidden md:block', 'goToNextSlide()', false, 'Next slide')}"></div>
+        
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20" 
+             role="tablist" 
+             aria-label="Slideshow pagination">
+            <button th:each="slide, iterStat : ${slides}"
+                    th:class="${'w-3 h-3 rounded-full border-2 border-white focus:outline-none focus:ring-2 focus:ring-green-400 pagination-dot'}"
+                    th:data-index="${iterStat.index}"
+                    th:onclick="'goToSlide(' + ${iterStat.index} + ')'"
+                    th:aria-label="'Go to slide ' + ${iterStat.index + 1}"
+                    th:aria-selected="${iterStat.index == 0}"
+                    tabindex="0"
+                    role="tab">
+            </button>
+        </div>
+    </div>
+</section>
+
+<script th:inline="javascript">
+let currentSlide = 0;
+let slideCount = /*[[${#lists.size(slides)}]]*/ 1;
+let slideDuration = /*[[${slideDuration ?: 5000}]]*/ 5000;
+let fadeDuration = /*[[${fadeDuration ?: 1500}]]*/ 1500;
+let isPaused = false;
+let slideTimeout;
+let onSlideChangeCallback = null;
+
+function initSlideshow() {
+    updateSlideVisibility();
+    updatePaginationDots();
+    if (!isPaused) {
+        startAutoSlide();
+    }
+}
+
+function updateSlideVisibility() {
+    const slides = document.querySelectorAll('.slide-item');
+    slides.forEach((slide, index) => {
+        if (index === currentSlide) {
+            slide.classList.add('opacity-100', 'z-10');
+            slide.classList.remove('opacity-0', 'z-0');
+            slide.setAttribute('aria-hidden', 'false');
+        } else {
+            slide.classList.add('opacity-0', 'z-0');
+            slide.classList.remove('opacity-100', 'z-10');
+            slide.setAttribute('aria-hidden', 'true');
+        }
+    });
+}
+
+function updatePaginationDots() {
+    const dots = document.querySelectorAll('.pagination-dot');
+    dots.forEach((dot, index) => {
+        if (index === currentSlide) {
+            dot.classList.add('bg-green-500');
+            dot.classList.remove('bg-white', 'bg-opacity-50');
+            dot.setAttribute('aria-selected', 'true');
+        } else {
+            dot.classList.add('bg-white', 'bg-opacity-50');
+            dot.classList.remove('bg-green-500');
+            dot.setAttribute('aria-selected', 'false');
+        }
+    });
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    updateSlideVisibility();
+    updatePaginationDots();
+    if (onSlideChangeCallback) {
+        onSlideChangeCallback(index);
+    }
+    if (!isPaused) {
+        clearTimeout(slideTimeout);
+        startAutoSlide();
+    }
+}
+
+function goToPrevSlide() {
+    const newIndex = (currentSlide - 1 + slideCount) % slideCount;
+    goToSlide(newIndex);
+}
+
+function goToNextSlide() {
+    const newIndex = (currentSlide + 1) % slideCount;
+    goToSlide(newIndex);
+}
+
+function startAutoSlide() {
+    slideTimeout = setTimeout(() => {
+        if (!isPaused) {
+            goToNextSlide();
+        }
+    }, slideDuration);
+}
+
+function pauseSlideshow() {
+    isPaused = true;
+    clearTimeout(slideTimeout);
+}
+
+function resumeSlideshow() {
+    isPaused = false;
+    startAutoSlide();
+}
+
+function setSlideChangeCallback(callback) {
+    onSlideChangeCallback = callback;
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') goToPrevSlide();
+    if (e.key === 'ArrowRight') goToNextSlide();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    initSlideshow();
+});
+</script>
+
+<style>
+.slide-item {
+    transition-property: opacity;
+}
+</style>
+
+</html>

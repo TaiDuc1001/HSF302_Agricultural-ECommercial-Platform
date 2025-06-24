@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="navCard(to, label, colorClass)" class="nav-card-component">
+    <a th:replace="~{components/NavCardBase :: navCardBase(${label}, ${colorClass ?: 'bg-green-600 text-white hover:bg-green-700'}, ${to})}"></a>
+</div>
+
+</html>

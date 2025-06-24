@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="search(value, onChange, content, placeholder)" class="search-component">
+    <div class="w-full relative">
+        <input type="text"
+               th:value="${value}"
+               th:onchange="${onChange}"
+               th:oninput="${onChange}"
+               th:placeholder="${placeholder ?: 'Search...'}"
+               class="w-full border border-gray-300 rounded-full py-2 px-5 pr-10 focus:outline-none focus:ring-2 focus:ring-green-400 shadow-sm" />
+        <div th:if="${content != null and !#strings.isEmpty(content)}" th:utext="${content}"></div>
+    </div>
+</div>
+
+</html>

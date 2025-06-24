@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="priceRangeSlider(value, onChange, min, max)" class="price-range-slider-component">
+    <div>
+        <h3 class="font-semibold mb-2">Price Range</h3>
+        <div class="flex flex-col items-center gap-2 w-full">
+            <div class="flex justify-between w-full text-sm">
+                <span th:text="'$' + ${value[0]}"></span>
+                <span th:text="'$' + ${value[1]}"></span>
+            </div>
+            <div class="w-full px-2">
+                <div class="relative">
+                    <input type="range"
+                           th:min="${min ?: 0}"
+                           th:max="${max ?: 1000}"
+                           th:value="${value[0]}"
+                           th:onchange="updatePriceRange(this.value, ${value[1]}, '${onChange}')"
+                           class="absolute w-full h-6 bg-transparent appearance-none cursor-pointer slider-thumb z-20"
+                           id="rangeMin" />
+                    <input type="range"
+                           th:min="${min ?: 0}"
+                           th:max="${max ?: 1000}"
+                           th:value="${value[1]}"
+                           th:onchange="updatePriceRange(${value[0]}, this.value, '${onChange}')"
+                           class="absolute w-full h-6 bg-transparent appearance-none cursor-pointer slider-thumb z-10"
+                           id="rangeMax" />
+                    <div class="relative h-6">
+                        <div class="absolute top-1/2 transform -translate-y-1/2 w-full h-2 bg-gray-200 rounded"></div>
+                        <div class="absolute top-1/2 transform -translate-y-1/2 h-2 bg-green-600 rounded slider-track"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+function updatePriceRange(minVal, maxVal, onChangeFunction) {
+    const min = parseInt(minVal);
+    const max = parseInt(maxVal);
+    
+    if (min >= max) {
+        return;
+    }
+    
+    const minRange = document.getElementById('rangeMin');
+    const maxRange = document.getElementById('rangeMax');
+    const track = document.querySelector('.slider-track');
+    
+    if (minRange && maxRange && track) {
+        const minPercent = ((min - parseInt(minRange.min)) / (parseInt(minRange.max) - parseInt(minRange.min))) * 100;
+        const maxPercent = ((max - parseInt(maxRange.min)) / (parseInt(maxRange.max) - parseInt(maxRange.min))) * 100;
+        
+        track.style.left = minPercent + '%';
+        track.style.width = (maxPercent - minPercent) + '%';
+        
+        document.querySelector('.price-range-slider-component .text-sm:first-child').textContent = '$' + min;
+        document.querySelector('.price-range-slider-component .text-sm:last-child').textContent = '$' + max;
+    }
+    
+    if (typeof window[onChangeFunction] === 'function') {
+        window[onChangeFunction]([min, max]);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const minRange = document.getElementById('rangeMin');
+    const maxRange = document.getElementById('rangeMax');
+    
+    if (minRange && maxRange) {
+        const track = document.querySelector('.slider-track');
+        if (track) {
+            const minPercent = ((parseInt(minRange.value) - parseInt(minRange.min)) / (parseInt(minRange.max) - parseInt(minRange.min))) * 100;
+            const maxPercent = ((parseInt(maxRange.value) - parseInt(maxRange.min)) / (parseInt(maxRange.max) - parseInt(maxRange.min))) * 100;
+            
+            track.style.left = minPercent + '%';
+            track.style.width = (maxPercent - minPercent) + '%';
+        }
+    }
+});
+</script>
+
+<style>
+.slider-thumb::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #16a34a;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider-thumb::-moz-range-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #16a34a;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider-track {
+    pointer-events: none;
+}
+</style>
+
+</html>

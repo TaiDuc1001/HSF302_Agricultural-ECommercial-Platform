@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="emptyState(message)" class="empty-state-component">
+    <div th:replace="~{components/EmptyStateBase :: emptyStateBase(${message ?: 'No items found.'}, null)}"></div>
+</div>
+
+</html>

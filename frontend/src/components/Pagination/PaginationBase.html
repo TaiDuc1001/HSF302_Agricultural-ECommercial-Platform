@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="paginationBase(totalPages, currentPage, onPageChange, content)" class="pagination-base-component">
+    <div class="flex justify-center items-center gap-2 mt-10">
+        <div th:utext="${content}"></div>
+    </div>
+</div>
+
+</html>

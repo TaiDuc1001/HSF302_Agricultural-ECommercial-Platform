@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="sellerCard(seller, rating, productCount, soldCount, showShopNow)" class="seller-card-component">
+    <div class="w-full max-w-6xl bg-white rounded-lg shadow p-8 flex flex-col md:flex-row items-center gap-8 mb-8">
+        <div class="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center text-4xl font-bold text-green-700">
+            <span th:text="${#strings.toUpperCase(#strings.substring(seller, 0, 1))}"></span>
+        </div>
+        
+        <div class="flex-1 w-full">
+            <h1 th:text="${seller}" class="text-3xl font-bold text-green-700 mb-2"></h1>
+            <div class="flex items-center gap-6 mt-2 mb-2">
+                <span th:text="'Rating: ' + ${rating}" class="text-base text-gray-700"></span>
+                <span th:text="'Products: ' + ${productCount}" class="text-base text-gray-700"></span>
+                <span th:text="'Total Sold: ' + ${soldCount}" class="text-base text-gray-700"></span>
+            </div>
+        </div>
+        
+        <div th:if="${showShopNow == null or showShopNow == true}" class="flex-shrink-0 flex items-center justify-center h-full">
+            <a th:href="'/sellers/' + ${#strings.replace(seller, ' ', '%20')}" 
+               class="px-6 py-2 bg-green-700 text-white rounded font-semibold hover:bg-green-800 transition whitespace-nowrap">
+                Shop now
+            </a>
+        </div>
+    </div>
+</div>
+
+</html>

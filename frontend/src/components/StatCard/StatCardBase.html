@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="statCardBase(value, label, className)" class="stat-card-base-component">
+    <div th:class="${'rounded-xl p-4 flex flex-col items-center ' + (className ?: '')}">
+        <div th:utext="${value}"></div>
+        <span th:text="${label}" class="text-xs text-gray-500"></span>
+    </div>
+</div>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="arrowButton(direction, variant, className, onclick, disabled, ariaLabel)" class="arrow-button-component">
+    <button th:type="button"
+            th:onclick="${onclick}"
+            th:disabled="${disabled}"
+            th:aria-label="${ariaLabel ?: (direction == 'left' ? 'Scroll left' : 'Scroll right')}"
+            th:class="${'p-2 rounded-full flex items-center justify-center transition-colors duration-150 ' + 
+                      (variant == 'outlined' ? 'border border-green-600 text-green-600 bg-white hover:bg-green-50 disabled:border-gray-200 disabled:text-gray-300' : 
+                                              'bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-200 disabled:text-gray-400') + 
+                      ' ' + (className ?: '')}">
+        
+        <svg th:if="${direction == 'left'}" 
+             width="24" 
+             height="24" 
+             fill="none" 
+             viewBox="0 0 24 24">
+            <path d="M15 6l-6 6 6 6" 
+                  stroke="currentColor" 
+                  stroke-width="2" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"/>
+        </svg>
+        
+        <svg th:if="${direction == 'right'}" 
+             width="24" 
+             height="24" 
+             fill="none" 
+             viewBox="0 0 24 24">
+            <path d="M9 6l6 6-6 6" 
+                  stroke="currentColor" 
+                  stroke-width="2" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"/>        </svg>
+    </button>
+</div>
+
+</html>

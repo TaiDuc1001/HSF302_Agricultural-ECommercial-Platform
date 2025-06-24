@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="pagination(totalPages, currentPage, onPageChange)" class="pagination-component">
+    <div class="flex justify-center items-center gap-2 mt-10">
+        <button th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                th:class="${'px-3 py-1 rounded transition ' + (pageNum == currentPage ? 'bg-green-600 text-white' : 'bg-white text-green-700 border border-green-600 hover:bg-green-100')}"
+                th:onclick="${onPageChange + '(' + pageNum + ')'}"
+                th:disabled="${pageNum == currentPage}"
+                th:text="${pageNum}">
+        </button>
+    </div>
+</div>
+
+</html>

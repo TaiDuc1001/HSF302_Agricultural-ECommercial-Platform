@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<section th:fragment="productCarousel(products, productsPerRow)" class="product-carousel-component my-12">
+    <h2 class="text-2xl font-bold text-center mb-6">Featured Products</h2>
+    <div class="flex items-center justify-center gap-4">
+        <div th:replace="~{components/ArrowButton :: arrowButton('left', 'outlined', '', 'scrollCarouselLeft()', false, 'Previous products')}"></div>
+        
+        <div class="flex gap-6 justify-center carousel-container" th:data-products-per-row="${productsPerRow ?: 5}">
+            <div th:each="product, iterStat : ${products}" 
+                 th:class="${'min-w-[180px] bg-white rounded-lg shadow-md p-4 flex flex-col items-center carousel-item ' + (iterStat.index >= (productsPerRow ?: 5) ? 'hidden' : '')}"
+                 th:data-index="${iterStat.index}">
+                <img th:src="${product.image}" 
+                     th:alt="${product.name}" 
+                     class="w-24 h-24 object-cover rounded mb-3" />
+                <h3 th:text="${product.name}" 
+                    class="font-semibold text-base mb-2 text-center"></h3>
+                <div th:replace="~{components/Button :: button('View Details', '/products/' + ${product.id}, true, false, 'mt-auto w-full', null, null)}"></div>
+            </div>
+        </div>
+        
+        <div th:replace="~{components/ArrowButton :: arrowButton('right', 'outlined', '', 'scrollCarouselRight()', false, 'Next products')}"></div>
+    </div>
+</section>
+
+<script th:inline="javascript">
+let currentStartIndex = 0;
+const productsPerRow = /*[[${productsPerRow ?: 5}]]*/ 5;
+const totalProducts = /*[[${#lists.size(products)}]]*/ 0;
+
+function updateCarouselVisibility() {
+    const items = document.querySelectorAll('.carousel-item');
+    const leftArrow = document.querySelector('[onclick="scrollCarouselLeft()"]');
+    const rightArrow = document.querySelector('[onclick="scrollCarouselRight()"]');
+    
+    items.forEach((item, index) => {
+        if (index >= currentStartIndex && index < currentStartIndex + productsPerRow) {
+            item.classList.remove('hidden');
+        } else {
+            item.classList.add('hidden');
+        }
+    });
+    
+    if (leftArrow) {
+        leftArrow.disabled = currentStartIndex <= 0;
+        if (currentStartIndex <= 0) {
+            leftArrow.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            leftArrow.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+    
+    if (rightArrow) {
+        rightArrow.disabled = currentStartIndex + productsPerRow >= totalProducts;
+        if (currentStartIndex + productsPerRow >= totalProducts) {
+            rightArrow.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            rightArrow.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+}
+
+function scrollCarouselLeft() {
+    if (currentStartIndex > 0) {
+        currentStartIndex = Math.max(0, currentStartIndex - productsPerRow);
+        updateCarouselVisibility();
+    }
+}
+
+function scrollCarouselRight() {
+    if (currentStartIndex + productsPerRow < totalProducts) {
+        currentStartIndex = Math.min(totalProducts - productsPerRow, currentStartIndex + productsPerRow);
+        updateCarouselVisibility();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateCarouselVisibility();
+});
+</script>
+
+</html>

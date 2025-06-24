@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="button(text, href, primary, secondary, className, buttonType, onclick)" class="button-component">
+    <a th:if="${href != null and !#strings.isEmpty(href)}"
+       th:href="${href}"
+       th:class="${'px-5 py-2 rounded font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 inline-block text-center ' + 
+                 (secondary ? 'bg-transparent text-white border-2 border-white hover:bg-white hover:text-green-700 focus:ring-green-400' : 
+                             'bg-green-600 text-white hover:bg-yellow-400 hover:text-green-800 focus:ring-green-400') + 
+                 ' ' + (className ?: '')}"
+       th:text="${text}">
+    </a>
+    
+    <button th:unless="${href != null and !#strings.isEmpty(href)}"
+            th:type="${buttonType ?: 'button'}"
+            th:onclick="${onclick}"
+            th:class="${'px-5 py-2 rounded font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ' + 
+                      (secondary ? 'bg-transparent text-white border-2 border-white hover:bg-white hover:text-green-700 focus:ring-green-400' : 
+                                  'bg-green-600 text-white hover:bg-yellow-400 hover:text-green-800 focus:ring-green-400') + 
+                      ' ' + (className ?: '')}"
+            th:text="${text}">    </button>
+</div>
+
+</html>
