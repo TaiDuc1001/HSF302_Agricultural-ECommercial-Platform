@@ -1,37 +1,46 @@
--- Admin users
-INSERT INTO user (name, email, password, address, phone_number, role, total_spent) VALUES ('John Admin', 'admin@agristore.com', 'admin123', '123 Main St, City Center', '0123456789', 'ADMIN', 0.0),
-('Sarah Manager', 'manager@agristore.com', 'manager123', '456 Oak Ave, Downtown', '0123456790', 'ADMIN', 0.0);
+-- Insert categories
+INSERT INTO categories (id, name, is_active)
+VALUES (1, 'Organic Produce', TRUE);
 
--- Seller users
-INSERT INTO user (name, email, password, address, phone_number, role, total_spent) VALUES
-('Mike Farmer', 'mike.farmer@email.com', 'seller123', '789 Farm Road, Rural Area', '0123456791', 'SELLER', 0.0),
-('Lisa Orchards', 'lisa.orchards@email.com', 'seller123', '321 Orchard Lane, Countryside', '0123456792', 'SELLER', 0.0),
-('Tom Vegetables', 'tom.veggies@email.com', 'seller123', '654 Green Valley, Farm District', '0123456793', 'SELLER', 0.0);
+-- Insert users (1 manager, 1 buyer, 2 sellers)
+INSERT INTO users (id, name, email, password, role, address, phone, is_active)
+VALUES
+    (1, 'manager 1', 'm@m', '123', 'MANAGER', '123 Farm St', '555-0101', TRUE),
+    (2, 'buyer 1', 'b@b', '123', 'BUYER', '456 Market Rd', '555-0102', TRUE),
+    (3, 'seller 1', 's1@s1', '123', 'SELLER', '789 Farm Ave', '555-0103', TRUE),
+    (4, 'seller 2', 's2@s2', '123', 'SELLER', '012 Orchard Ln', '555-0104', TRUE);
 
--- Buyer users
-INSERT INTO user (name, email, password, address, phone_number, role, total_spent) VALUES
-('Alice Johnson', 'alice.johnson@email.com', 'buyer123', '111 Elm St, Suburb', '0123456794', 'BUYER', 150.50),
-('Bob Smith', 'bob.smith@email.com', 'buyer123', '222 Pine Ave, Residential', '0123456795', 'BUYER', 89.75),
-('Carol Brown', 'carol.brown@email.com', 'buyer123', '333 Cedar Blvd, City Heights', '0123456796', 'BUYER', 234.25),
-('David Wilson', 'david.wilson@email.com', 'buyer123', '444 Maple Dr, Uptown', '0123456797', 'BUYER', 67.00),
-('Emma Davis', 'emma.davis@email.com', 'buyer123', '555 Birch St, Midtown', '0123456798', 'BUYER', 0.0);
+-- Insert produces (1 pre-order: corn, 2 non-pre-order: pumpkins, tomatoes)
+INSERT INTO produces (id, name, seller_id, description, price, quantity, img_url, category_id, is_active, preorder_startdate, preorder_enddate)
+VALUES
+    (1, 'Organic Corn', 3, 'Fresh organic corn', 5.00, 100, 'corn.jpg', 1, TRUE, '2025-07-01 00:00:00', '2025-07-31 23:59:59'), -- Pre-order
+    (2, 'Organic Pumpkins', 3, 'Sweet organic pumpkins', 10.00, 50, 'pumpkin.jpg', 1, TRUE, NULL, NULL), -- Non-pre-order
+    (3, 'Organic Tomatoes', 4, 'Juicy organic tomatoes', 3.00, 200, 'tomato.jpg', 1, TRUE, NULL, NULL); -- Non-pre-order
 
--- Product categories
-INSERT INTO category (name, description) VALUES
-('Fresh Vegetables', 'Organic and locally sourced vegetables');
+-- Insert discount_codes (for pre-order corn)
+INSERT INTO discount_codes (code, type, value, max_uses, used_count, valid_from, valid_until, produce_id, is_active)
+VALUES
+    ('PORN30', 'PERCENTAGE', 30.00, 100, 1, '2025-07-01 00:00:00', '2025-07-31 23:59:59', 1, TRUE);
 
--- Discount codes
-INSERT INTO discount_code (code, discount_value, expiration_date, is_active) VALUES
-('SAVE10', 10.00, '2024-12-31', true);
+-- Insert orders (1 pre-order for corn, 1 non-pre-order for pumpkins and tomatoes)
+INSERT INTO orders (id, buyer_id, order_date, discount_code, total_amount, discount_amount, final_amount, is_preorder, payment_date, payment_method, status, is_active)
+VALUES
+    (1, 2, '2025-07-07 20:12:00', 'PORN30', 10.00, 3.00, 7.00, TRUE, '2025-07-07 20:15:00', 'E_WALLET', 'PAID', TRUE), -- Pre-order: 2 corn @ $5 = $10, 30% off
+    (2, 2, '2025-07-07 20:20:00', NULL, 16.00, 0.00, 16.00, FALSE, '2025-07-07 20:22:00', 'CASH', 'PAID', TRUE); -- Non-pre-order: 1 pumpkin @ $10 + 2 tomatoes @ $3 = $16
 
--- Produce
-INSERT INTO produce (name, description, price, stock_quantity, is_active, user_id, category_id) VALUES
-('Organic Tomatoes', 'Fresh organic tomatoes from local farm', 4.99, 50, true, 1, 1);
+-- Insert order_details (1 for pre-order, 2 for non-pre-order)
+INSERT INTO order_details (id, order_id, produce_id, quantity, unit_price)
+VALUES
+    (1, 1, 1, 2, 5.00), -- Pre-order: 2 corn
+    (2, 2, 2, 1, 10.00), -- Non-pre-order: 1 pumpkin
+    (3, 2, 3, 2, 3.00); -- Non-pre-order: 2 tomatoes
 
--- Orders
-INSERT INTO orders (ordered_date, status, price, shipping_address, user_id, discount_code_id) VALUES
-('2024-01-15', 'PENDING', 24.99, '123 Main St, City, State 12345', 1, 1);
+-- Insert user_items (e.g., buyer's wishlist)
+INSERT INTO user_items (id, buyer_id, produce_id, quantity, is_active)
+VALUES
+    (1, 2, 1, 1, TRUE); -- Buyer Jane has 1 corn in wishlist
 
--- User items
-INSERT INTO user_item (user_id, produce_id, quantity, is_active) VALUES
-(1, 1, 2, true);
+-- Insert reviews (for pre-order corn)
+INSERT INTO reviews (id, order_id, buyer_id, produce_id, rating, comment, is_active)
+VALUES
+    (1, 1, 2, 1, 4.5, 'Delicious organic corn, worth the wait!', TRUE);

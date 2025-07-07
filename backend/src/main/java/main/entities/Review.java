@@ -6,15 +6,19 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @Entity
-@Table(name = "user_items")
+@Table(name = "reviews")
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserItem {
+public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     Long id;
+
+    Integer rating;
+    String comment;
+    Boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -24,10 +28,7 @@ public class UserItem {
     @JoinColumn(name = "produce_id")
     Produce produce;
 
-    @Column(nullable = false)
-    Integer quantity;
-
-    @Column(nullable = false)
-    Boolean isActive = true;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    Order order;
 }
-

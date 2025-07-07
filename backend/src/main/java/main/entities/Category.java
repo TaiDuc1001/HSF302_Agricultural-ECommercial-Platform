@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class Category {
     Long id;
 
     String name;
-    String description;
+    Boolean isActive;
 
     @OneToMany(mappedBy = "category")
     List<Produce> produceList;

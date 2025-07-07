@@ -8,7 +8,7 @@ import main.enumerators.Role;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -24,11 +24,14 @@ public class User {
     String password;
     String address;
     String phoneNumber;
+    Boolean isActive;
 
     @Enumerated(EnumType.STRING)
     Role role;
-    Double totalSpent;
 
     @OneToMany(mappedBy = "user")
     List<UserItem> userItems;
+
+    @OneToMany(mappedBy = "user")
+    List<Review> reviews;
 }

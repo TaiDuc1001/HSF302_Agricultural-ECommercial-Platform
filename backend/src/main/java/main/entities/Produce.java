@@ -22,8 +22,9 @@ public class Produce {
     String name;
     String description;
     BigDecimal price;
-    Integer stockQuantity;
+    Integer quantity;
     Boolean isActive;
+    String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -35,4 +36,10 @@ public class Produce {
 
     @OneToMany(mappedBy = "produce")
     List<UserItem> userItems;
+
+    @OneToMany(mappedBy = "produce")
+    List<Review> reviews;
+
+    @OneToMany(mappedBy = "produce")
+    List<DiscountCode> discountCodes;
 }
