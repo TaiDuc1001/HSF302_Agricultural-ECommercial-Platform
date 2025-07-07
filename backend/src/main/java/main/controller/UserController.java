@@ -20,6 +20,11 @@ public class UserController {
         return userService.login(user.getEmail(), user.getPassword());
     }
 
+    @PostMapping
+    public UserDTO register(@RequestBody UserDTO userDTO) {
+        return userService.createUser(userDTO);
+    }
+
     @GetMapping("/role/{stringRole}")
     public List<UserDTO> getUsersByRole(@PathVariable String stringRole) {
         Role role = Role.valueOf(stringRole.toUpperCase());

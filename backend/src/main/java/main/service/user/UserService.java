@@ -13,4 +13,5 @@ public interface UserService {
     public abstract List<UserDTO> getUsersByRole(Role role);
     public abstract UserDTO toDTO(User user);
     public abstract List<UserDTO> toDTOs(List<User> users);
+    public abstract UserDTO createUser(UserDTO userDTO);
 }
