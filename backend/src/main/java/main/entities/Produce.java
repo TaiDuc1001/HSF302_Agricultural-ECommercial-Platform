@@ -1,10 +1,8 @@
-package main.produce;
+package main.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import main.account.User;
-import main.category.Category;
 
 import java.math.BigDecimal;
 

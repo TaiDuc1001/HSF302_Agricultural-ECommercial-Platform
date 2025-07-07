@@ -1,11 +1,8 @@
-package main.user_item;
+package main.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import main.account.User;
-import main.order.Order;
-import main.produce.Produce;
 
 @Data
 @Entity(name = "user_item")

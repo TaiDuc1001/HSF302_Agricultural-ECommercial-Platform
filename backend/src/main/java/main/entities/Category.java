@@ -1,4 +1,4 @@
-package main.category;
+package main.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,7 +6,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import main.produce.Produce;
 
 import java.util.List;
 

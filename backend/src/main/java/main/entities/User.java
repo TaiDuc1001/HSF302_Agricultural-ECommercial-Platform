@@ -1,8 +1,9 @@
-package main.account;
+package main.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import main.enumerators.Role;
 
 @Entity
 @Data

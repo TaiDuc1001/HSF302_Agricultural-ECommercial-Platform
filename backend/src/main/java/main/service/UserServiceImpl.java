@@ -1,7 +1,10 @@
-package main.account;
+package main.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import main.enumerators.Role;
+import main.repository.UserRepository;
+import main.entities.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

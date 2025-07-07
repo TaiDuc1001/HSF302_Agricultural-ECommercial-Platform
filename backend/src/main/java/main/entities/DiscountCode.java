@@ -1,9 +1,8 @@
-package main.discount_code;
+package main.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import main.order.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

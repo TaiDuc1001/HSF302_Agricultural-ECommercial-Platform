@@ -1,4 +1,7 @@
-package main.account;
+package main.service;
+
+import main.enumerators.Role;
+import main.entities.User;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package main.order;
+package main.enumerators;
 
 public enum OrderStatus {
     PENDING,
