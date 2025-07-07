@@ -33,5 +33,5 @@ INSERT INTO orders (ordered_date, status, price, shipping_address, user_id, disc
 ('2024-01-15', 'PENDING', 24.99, '123 Main St, City, State 12345', 1, 1);
 
 -- User items
-INSERT INTO user_item (user_id, produce_id, order_id, quantity, is_active) VALUES
-(1, 1, 1, 2, true);
+INSERT INTO user_item (user_id, produce_id, quantity, is_active) VALUES
+(1, 1, 2, true);

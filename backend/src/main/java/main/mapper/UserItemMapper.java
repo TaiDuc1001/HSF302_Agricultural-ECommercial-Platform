@@ -15,7 +15,6 @@ public interface UserItemMapper {
     @Mapping(source = "produce.id", target = "produceId")
     @Mapping(source = "produce.name", target = "produceName")
     @Mapping(source = "produce.price", target = "producePrice")
-    @Mapping(source = "order.id", target = "orderId")
     @Mapping(target = "totalPrice", expression = "java(userItem.getProduce().getPrice().multiply(new BigDecimal(userItem.getQuantity())))")
     UserItemDTO toDTO(UserItem userItem);
 

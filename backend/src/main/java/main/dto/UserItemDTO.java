@@ -17,6 +17,5 @@ public class UserItemDTO {
     BigDecimal producePrice;
     Integer quantity;
     BigDecimal totalPrice;
-    Long orderId;
     Boolean isActive;
 }
