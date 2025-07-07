@@ -26,9 +26,11 @@ public class Order {
     BigDecimal totalAmount;
     BigDecimal discountAmount;
     BigDecimal finalAmount;
-    boolean isPreOrder;
     LocalDate paymentDate;
     Boolean isActive;
+
+    @Column(name = "is_preorder")
+    boolean isPreOrder;
 
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
@@ -41,7 +43,7 @@ public class Order {
     User user;
 
     @ManyToOne
-    @JoinColumn(name = "discount_code_id")
+    @JoinColumn(name = "discount_code")
     DiscountCode discountCode;
 
     @OneToMany(mappedBy = "order")

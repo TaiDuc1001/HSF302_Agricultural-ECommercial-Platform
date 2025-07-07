@@ -6,6 +6,7 @@ import main.dto.OrderDTO;
 import main.entities.DiscountCode;
 import main.entities.Order;
 import main.entities.User;
+import main.enumerators.DiscountType;
 import main.enumerators.OrderStatus;
 import main.mapper.OrderMapper;
 import main.repository.DiscountCodeRepository;
@@ -13,6 +14,8 @@ import main.repository.OrderRepository;
 import main.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -28,17 +31,33 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findById(orderDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + orderDTO.getUserId()));
 
-        DiscountCode discountCode = discountCodeRepository.findDiscountCodeByCode(orderDTO.getDiscountCode());
-
         Order order = Order.builder()
                 .id(null)
                 .user(user)
-                .discountCode(discountCode)
-                .orderedDate(orderDTO.getOrderedDate())
-                .status(orderDTO.getStatus())
-                .price(orderDTO.getPrice())
-                .shippingAddress(orderDTO.getShippingAddress())
+                .orderDate(LocalDate.now())
+                .totalAmount(orderDTO.getTotalAmount())
+                .discountAmount(BigDecimal.valueOf(0))
+                .finalAmount(orderDTO.getTotalAmount())
+                .isPreOrder(orderDTO.isPreOrder())
+                .isActive(true)
+                .status(OrderStatus.CREATED)
                 .build();
+
+        if(orderDTO.isPreOrder()){
+            DiscountCode discountCode = discountCodeRepository.findDiscountCodeByCode(orderDTO.getDiscountCode());
+            BigDecimal discountAmount = BigDecimal.valueOf(0);
+            if(discountCode.getType() == DiscountType.FIXED){
+                discountAmount = discountCode.getValue();
+            }else if(discountCode.getType() == DiscountType.PERCENTAGE){
+                discountAmount = orderDTO.getTotalAmount().multiply(discountCode.getValue().divide(BigDecimal.valueOf(100)));
+            }
+
+            order = order.toBuilder()
+                    .discountCode(discountCode)
+                    .discountAmount(discountAmount)
+                    .finalAmount(orderDTO.getTotalAmount().subtract(discountAmount))
+                    .build();
+        }
 
         return toDTO(orderRepository.save(order));
     }
@@ -66,12 +85,17 @@ public class OrderServiceImpl implements OrderService {
         DiscountCode discountCode = discountCodeRepository.findDiscountCodeByCode(orderDTO.getDiscountCode());
 
         Order order = findOrderById(id).toBuilder()
-                .shippingAddress(orderDTO.getShippingAddress())
-                .price(orderDTO.getPrice())
-                .status(orderDTO.getStatus())
-                .orderedDate(orderDTO.getOrderedDate())
                 .user(user)
                 .discountCode(discountCode)
+                .orderDate(orderDTO.getOrderDate())
+                .totalAmount(orderDTO.getTotalAmount())
+                .discountAmount(orderDTO.getDiscountAmount())
+                .finalAmount(orderDTO.getTotalAmount())
+                .isPreOrder(orderDTO.isPreOrder())
+                .isActive(orderDTO.getIsActive())
+                .paymentDate(orderDTO.getPaymentDate())
+                .paymentMethod(orderDTO.getPaymentMethod())
+                .status(orderDTO.getStatus())
                 .build();
 
         return toDTO(orderRepository.save(order));

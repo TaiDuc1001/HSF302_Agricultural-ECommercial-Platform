@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class DiscountCodeDTO {
     Long id;
     String code;
-    BigDecimal discountValue;
+    BigDecimal value;
     LocalDate expirationDate;
     Boolean isActive;
 }

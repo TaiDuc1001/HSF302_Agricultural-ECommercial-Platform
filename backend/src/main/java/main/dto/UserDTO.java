@@ -13,7 +13,6 @@ public class UserDTO {
     String email;
     String password;
     String address;
-    String phoneNumber;
+    String phone;
     Role role;
-    Double totalSpent;
 }

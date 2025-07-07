@@ -1,8 +1,8 @@
 package main.enumerators;
 
 public enum OrderStatus {
-    PENDING,
-    IN_PROGRESS,
+    CREATED,
+    PAID,
     COMPLETED,
     CANCELLED,
 }

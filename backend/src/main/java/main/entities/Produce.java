@@ -5,10 +5,11 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "produce")
+@Table(name = "produces")
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -24,7 +25,13 @@ public class Produce {
     BigDecimal price;
     Integer quantity;
     Boolean isActive;
-    String imageUrl;
+    String imgUrl;
+
+    @Column(name = "preorder_startdate")
+    LocalDate preOrderStartDate;
+
+    @Column(name = "preorder_enddate")
+    LocalDate preOrderEndDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

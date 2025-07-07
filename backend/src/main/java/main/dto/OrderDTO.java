@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import main.enumerators.OrderStatus;
+import main.enumerators.PaymentMethod;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,9 +14,14 @@ import java.time.LocalDate;
 public class OrderDTO {
    Long id;
    Long userId;
-   String shippingAddress;
-   LocalDate orderedDate;
+   LocalDate orderDate;
+   BigDecimal totalAmount;
+   BigDecimal discountAmount;
+   BigDecimal finalAmount;
+   boolean isPreOrder;
+   LocalDate paymentDate;
+   Boolean isActive;
+   PaymentMethod paymentMethod;
    OrderStatus status;
-   BigDecimal price;
    String discountCode;
 }

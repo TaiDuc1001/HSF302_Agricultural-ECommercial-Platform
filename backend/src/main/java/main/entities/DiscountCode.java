@@ -26,7 +26,7 @@ public class DiscountCode {
 
     int maxUses;
     int usedCount;
-    BigDecimal discountValue;
+    BigDecimal value;
     LocalDate validFrom;
     LocalDate validUntil;
     Boolean isActive;

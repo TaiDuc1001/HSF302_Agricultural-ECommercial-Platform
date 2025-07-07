@@ -23,7 +23,7 @@ public class User {
     String email;
     String password;
     String address;
-    String phoneNumber;
+    String phone;
     Boolean isActive;
 
     @Enumerated(EnumType.STRING)
