@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Entity
 @Table(name = "user_item")
-@Builder
+@Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,10 +23,6 @@ public class UserItem {
     @ManyToOne
     @JoinColumn(name = "produce_id")
     Produce produce;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    Order order;
 
     @Column(nullable = false)
     Integer quantity;
