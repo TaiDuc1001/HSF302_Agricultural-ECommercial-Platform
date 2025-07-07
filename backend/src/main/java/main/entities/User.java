@@ -8,6 +8,7 @@ import main.enumerators.Role;
 import java.util.List;
 
 @Entity
+@Table(name = "user")
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)

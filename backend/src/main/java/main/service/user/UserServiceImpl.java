@@ -2,9 +2,11 @@ package main.service.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import main.enumerators.Role;
-import main.repository.UserRepository;
+import main.dto.UserDTO;
 import main.entities.User;
+import main.enumerators.Role;
+import main.mapper.UserMapper;
+import main.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,22 +15,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
     @Override
-    public User login(String email, String password) {
+    public UserDTO login(String email, String password) {
         User user = userRepository.findUserByEmailAndPassword(email, password);
         if(user == null){
             throw new EntityNotFoundException("User not found");
         }
-        return user;
+        return toDTO(user);
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        return toDTOs(userRepository.findAll());
     }
 
     @Override
-    public List<User> getUsersByRole(Role role) {
-        return userRepository.findUsersByRole(role);
+    public List<UserDTO> getUsersByRole(Role role) {
+        return toDTOs(userRepository.findUsersByRole(role));
+    }
+
+    @Override
+    public UserDTO toDTO(User user) {
+        return userMapper.toDTO(user);
+    }
+
+    @Override
+    public List<UserDTO> toDTOs(List<User> users) {
+        return userMapper.toDTOs(users);
+    }
+
+    @Override
+    public UserDTO getUserById(Long id) {
+        return toDTO(userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id)));
     }
 }

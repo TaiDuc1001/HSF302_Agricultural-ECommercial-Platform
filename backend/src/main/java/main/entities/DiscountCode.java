@@ -9,11 +9,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@Entity(name = "discount_code")
+@Entity
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "discount_code")
 public class DiscountCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,6 @@ public class DiscountCode {
     LocalDate expirationDate;
     Boolean isActive;
 
-    @OneToMany(mappedBy = "discount_code")
+    @OneToMany(mappedBy = "discountCode")
     List<Order> orderList;
 }

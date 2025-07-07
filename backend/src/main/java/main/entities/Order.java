@@ -11,6 +11,7 @@ import java.util.List;
 
 @Data
 @Entity
+@Table (name = "orders")
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
@@ -21,7 +22,9 @@ public class Order {
     Long id;
 
     LocalDate orderedDate;
-    OrderStatus Status;
+
+    @Enumerated(EnumType.STRING)
+    OrderStatus status;
     BigDecimal price;
     String shippingAddress;
 

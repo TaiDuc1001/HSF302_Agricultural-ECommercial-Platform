@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
+@Table(name = "produce")
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)

@@ -1,7 +1,7 @@
 package main.controller;
 
 import lombok.RequiredArgsConstructor;
-import main.entities.UserItem;
+import main.dto.UserItemDTO;
 import main.service.user_item.UserItemService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,7 @@ public class UserItemController {
     private final UserItemService userItemService;
 
     @GetMapping("/user/{userId}")
-    public List<UserItem> getUserItemByUserId(@PathVariable Long userId) {
+    public List<UserItemDTO> getUserItemByUserId(@PathVariable Long userId) {
         return userItemService.findUserItemsByUserId(userId);
     }
 }

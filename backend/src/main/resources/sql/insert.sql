@@ -15,3 +15,23 @@ INSERT INTO user (name, email, password, address, phone_number, role, total_spen
 ('Carol Brown', 'carol.brown@email.com', 'buyer123', '333 Cedar Blvd, City Heights', '0123456796', 'BUYER', 234.25),
 ('David Wilson', 'david.wilson@email.com', 'buyer123', '444 Maple Dr, Uptown', '0123456797', 'BUYER', 67.00),
 ('Emma Davis', 'emma.davis@email.com', 'buyer123', '555 Birch St, Midtown', '0123456798', 'BUYER', 0.0);
+
+-- Product categories
+INSERT INTO category (name, description) VALUES
+('Fresh Vegetables', 'Organic and locally sourced vegetables');
+
+-- Discount codes
+INSERT INTO discount_code (code, discount_value, expiration_date, is_active) VALUES
+('SAVE10', 10.00, '2024-12-31', true);
+
+-- Produce
+INSERT INTO produce (name, description, price, stock_quantity, is_active, user_id, category_id) VALUES
+('Organic Tomatoes', 'Fresh organic tomatoes from local farm', 4.99, 50, true, 1, 1);
+
+-- Orders
+INSERT INTO orders (ordered_date, status, price, shipping_address, user_id, discount_code_id) VALUES
+('2024-01-15', 'PENDING', 24.99, '123 Main St, City, State 12345', 1, 1);
+
+-- User items
+INSERT INTO user_item (user_id, produce_id, order_id, quantity, is_active) VALUES
+(1, 1, 1, 2, true);
