@@ -1,7 +1,7 @@
 package main.account;
 
 public enum Role {
-    CUSTOMER,
+    BUYER,
     SELLER,
     ADMIN
 }
