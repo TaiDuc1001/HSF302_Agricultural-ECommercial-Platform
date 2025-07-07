@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @Entity
 @Table (name = "orders")
-@Builder
+@Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
