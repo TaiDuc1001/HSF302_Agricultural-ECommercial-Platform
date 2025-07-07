@@ -1,4 +1,4 @@
-package main.service;
+package main.service.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

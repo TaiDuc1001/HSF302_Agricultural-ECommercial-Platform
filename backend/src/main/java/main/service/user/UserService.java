@@ -1,4 +1,4 @@
-package main.service;
+package main.service.user;
 
 import main.enumerators.Role;
 import main.entities.User;

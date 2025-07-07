@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Data
@@ -30,4 +31,7 @@ public class Produce {
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
+
+    @OneToMany(mappedBy = "produce")
+    List<UserItem> userItems;
 }

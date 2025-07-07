@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import main.enumerators.Role;
 
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -25,4 +27,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     Role role;
     Double totalSpent;
+
+    @OneToMany(mappedBy = "user")
+    List<UserItem> userItems;
 }

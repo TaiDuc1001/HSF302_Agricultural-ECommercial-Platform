@@ -7,6 +7,7 @@ import main.enumerators.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -31,4 +32,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "discount_code_id")
     DiscountCode discountCode;
+
+    @OneToMany(mappedBy = "order")
+    List<UserItem> userItems;
 }
