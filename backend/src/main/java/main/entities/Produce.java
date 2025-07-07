@@ -25,8 +25,8 @@ public class Produce {
     Boolean isActive;
 
     @ManyToOne
-    @JoinColumn(name = "seller_id")
-    User seller;
+    @JoinColumn(name = "user_id")
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
