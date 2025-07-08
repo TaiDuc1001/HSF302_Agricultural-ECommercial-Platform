@@ -1,7 +1,7 @@
 package main.service.user_item;
 
 import main.dto.UserItemDTO;
-import main.entities.UserItem;
+import main.pojo.UserItem;
 
 import java.util.List;
 

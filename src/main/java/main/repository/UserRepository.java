@@ -1,7 +1,7 @@
 package main.repository;
 
 import main.enumerators.Role;
-import main.entities.User;
+import main.pojo.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

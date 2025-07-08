@@ -1,7 +1,6 @@
-package main.controller;
+package main.controller.web;
 
 import main.dto.UserDTO;
-import main.entities.User;
 import main.enumerators.Role;
 import main.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

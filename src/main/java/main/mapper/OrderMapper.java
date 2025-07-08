@@ -1,7 +1,7 @@
 package main.mapper;
 
 import main.dto.OrderDTO;
-import main.entities.Order;
+import main.pojo.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

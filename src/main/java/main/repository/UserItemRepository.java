@@ -1,6 +1,6 @@
 package main.repository;
 
-import main.entities.UserItem;
+import main.pojo.UserItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
