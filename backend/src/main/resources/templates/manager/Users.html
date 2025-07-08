@@ -1,15 +1,199 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - AgriMarket Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-green-600">AgriMarket Manager</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" th:text="|Welcome, ${name}|">Welcome, Manager</span>
+                    <a href="/manager/home" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                    <a href="/auth/logout" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<div class="manager-users-page">
-    <div class="p-8 text-center">
-        <h2 class="text-2xl font-bold mb-4">Manage Buyers</h2>
-        <ul class="mb-6">
-            <li>User: Alice</li>
-            <li>User: Bob</li>
-        </ul>
-        <a href="/content" class="text-green-700 underline hover:text-green-900">Back to Dashboard</a>
+    <div class="p-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Manage Users</h1>
+                <p class="text-gray-600">View and manage all user accounts on the platform</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">User Statistics</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" th:text="${totalUsers ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Total Users</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" th:text="${totalBuyers ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Buyers</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600" th:text="${totalSellers ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Sellers</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600" th:text="${totalManagers ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Managers</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">All Users</h2>
+                    <div class="flex space-x-4">
+                        <select id="role-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="">All Roles</option>
+                            <option value="BUYER">Buyers</option>
+                            <option value="SELLER">Sellers</option>
+                            <option value="MANAGER">Managers</option>
+                        </select>
+                        <input type="text" id="search-users" placeholder="Search users..." 
+                               class="px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+
+                <div th:if="${users != null and not #lists.isEmpty(users)}">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr th:each="user : ${users}" class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img th:src="@{https://ui-avatars.com/api/?name={name}&background=34d399&color=fff&size=40(name=${user.name})}" 
+                                                 alt="Avatar" class="w-10 h-10 rounded-full mr-3" />
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900" th:text="${user.name}">John Doe</div>
+                                                <div class="text-sm text-gray-500" th:text="|ID: ${user.id}|">ID: 1</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium"
+                                              th:classappend="${user.role == 'BUYER'} ? 'bg-green-100 text-green-800' : 
+                                                             ${user.role == 'SELLER'} ? 'bg-purple-100 text-purple-800' : 
+                                                             'bg-blue-100 text-blue-800'"
+                                              th:text="${user.role}">BUYER</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.email}">john@example.com</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.phone ?: 'N/A'}">+1234567890</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium"
+                                              th:classappend="${user.isActive} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                                              th:text="${user.isActive} ? 'Active' : 'Inactive'">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        <button th:onclick="|viewUser(${user.id})|" 
+                                                class="text-blue-600 hover:text-blue-800">View</button>
+                                        <button th:if="${user.isActive}" 
+                                                th:onclick="|toggleUserStatus(${user.id}, false)|" 
+                                                class="text-red-600 hover:text-red-800">Deactivate</button>
+                                        <button th:if="${not user.isActive}" 
+                                                th:onclick="|toggleUserStatus(${user.id}, true)|" 
+                                                class="text-green-600 hover:text-green-800">Activate</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div th:if="${users == null or #lists.isEmpty(users)}" 
+                     class="text-center py-8">
+                    <div class="text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                        <p class="text-lg font-medium">No users found</p>
+                        <p class="text-sm">Users will appear here once they register</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
+    <script>
+        function viewUser(userId) {
+            window.location.href = '/manager/users/' + userId;
+        }
+
+        function toggleUserStatus(userId, activate) {
+            const action = activate ? 'activate' : 'deactivate';
+            if (confirm(`Are you sure you want to ${action} this user?`)) {
+                fetch('/manager/users/' + userId + '/toggle-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ activate: activate })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to update user status');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating user status');
+                });
+            }
+        }
+
+        function filterUsers() {
+            const roleFilter = document.getElementById('role-filter').value;
+            const searchTerm = document.getElementById('search-users').value;
+            
+            let url = '/manager/users';
+            const params = new URLSearchParams();
+            
+            if (roleFilter) params.append('role', roleFilter);
+            if (searchTerm) params.append('search', searchTerm);
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            window.location.href = url;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('role-filter').addEventListener('change', filterUsers);
+            
+            const searchInput = document.getElementById('search-users');
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(filterUsers, 500);
+            });
+        });
+    </script>
+</body>
 </html>

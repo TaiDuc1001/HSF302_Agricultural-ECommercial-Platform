@@ -40,6 +40,7 @@ public class ManagerController {
         if (user == null || !"MANAGER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
+        model.addAttribute("name", user.getName());
 
         return "manager/users";
     }
