@@ -31,7 +31,6 @@ public class ManagerController {
     
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
-        // Redirect to home for consistency
         return "redirect:/manager/home";
     }
 
