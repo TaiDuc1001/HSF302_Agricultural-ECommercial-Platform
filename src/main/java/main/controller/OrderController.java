@@ -1,4 +1,4 @@
-package main.controller.web;
+package main.controller;
 
 import lombok.RequiredArgsConstructor;
 import main.dto.OrderDTO;

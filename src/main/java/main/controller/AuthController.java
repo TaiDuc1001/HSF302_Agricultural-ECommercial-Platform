@@ -1,4 +1,4 @@
-package main.controller.web;
+package main.controller;
 
 import main.dto.UserDTO;
 import main.enumerators.Role;

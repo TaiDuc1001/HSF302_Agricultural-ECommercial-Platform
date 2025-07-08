@@ -1,4 +1,4 @@
-package main.controller.api;
+package main.controller;
 
 import lombok.RequiredArgsConstructor;
 import main.dto.UserItemDTO;
