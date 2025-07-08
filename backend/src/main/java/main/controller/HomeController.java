@@ -33,8 +33,8 @@ public class HomeController {
         }
         
         switch (user.getRole()) {
-            case ADMIN:
-                return "redirect:/admin/home";
+            case MANAGER:
+                return "redirect:/manager/home";
             case SELLER:
                 return "redirect:/seller/home";
             case BUYER:

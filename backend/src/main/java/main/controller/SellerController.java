@@ -21,6 +21,7 @@ public class SellerController {
         }
 
         model.addAttribute("user", user);
+        model.addAttribute("name", user.getName());
         
         model.addAttribute("totalProducts", 12);
         model.addAttribute("totalOrders", 156);

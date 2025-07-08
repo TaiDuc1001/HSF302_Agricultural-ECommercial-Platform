@@ -19,9 +19,9 @@
         
         <div th:if="${user != null}" class="flex items-center space-x-3 ml-8">
             <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-green-700 font-bold text-lg">
-                <span th:text="${#strings.toUpperCase(#strings.substring(user.username, 0, 1))}"></span>
+                <span th:text="${#strings.toUpperCase(#strings.substring(user.name, 0, 1))}"></span>
             </div>
-            <span th:text="${user.username}" class="font-semibold"></span>
+            <span th:text="${user.name}" class="font-semibold"></span>
             <div th:replace="~{components/Button :: button('Logout', null, false, true, '', 'button', 'handleLogout()')}"></div>
         </div>
         

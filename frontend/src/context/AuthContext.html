@@ -6,15 +6,15 @@
         const AuthContext = {
             user: /*[[${user}]]*/ null,
             accounts: [
-                { username: 'a', password: 'a', role: 'admin' },
-                { username: 'b', password: 'b', role: 'buyer' },
-                { username: 's', password: 's', role: 'seller' }
+                { email: 'm@m', password: '123', role: 'manager' },
+                { email: 'b@b', password: '123', role: 'buyer' },
+                { email: 's1@s1', password: '123', role: 'seller' }
             ],
             
-            login: async function(username, password) {
-                const found = this.accounts.find(acc => acc.username === username && acc.password === password);
+            login: async function(email, password) {
+                const found = this.accounts.find(acc => acc.email === email && acc.password === password);
                 if (found) {
-                    this.user = { username: found.username, role: found.role, password: found.password };
+                    this.user = { email: found.email, role: found.role, password: found.password };
                     sessionStorage.setItem('user', JSON.stringify(this.user));
                     return 'success';
                 }
@@ -27,11 +27,11 @@
                 window.location.href = '/';
             },
             
-            register: async function(username, password, role) {
-                if (this.accounts.find(acc => acc.username === username)) {
+            register: async function(email, password, role) {
+                if (this.accounts.find(acc => acc.email === email)) {
                     return 'fail';
                 }
-                const newUser = { username, password, role };
+                const newUser = { email, password, role };
                 this.accounts.push(newUser);
                 this.user = newUser;
                 sessionStorage.setItem('user', JSON.stringify(this.user));
@@ -57,8 +57,8 @@
                 return user && user.role === role;
             },
             
-            isAdmin: function() {
-                return this.hasRole('admin');
+            isManager: function() {
+                return this.hasRole('manager');
             },
             
             isBuyer: function() {

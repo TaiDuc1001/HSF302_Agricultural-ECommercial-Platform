@@ -55,15 +55,15 @@ public class AuthController {
         }
         
         session.setAttribute("user", user);
-        session.setAttribute("username", user.getEmail());
+        session.setAttribute("name", user.getName());
+        session.setAttribute("email", user.getEmail());
         session.setAttribute("role", user.getRole().toString());
 
         String role = user.getRole().toString();
 
-        // Redirect based on role
         switch (role.toUpperCase()) {
-            case "ADMIN":
-                return "redirect:/admin/home";
+            case "MANAGER":
+                return "redirect:/manager/home";
             case "SELLER":
                 return "redirect:/seller/home";
             case "BUYER":
@@ -89,12 +89,13 @@ public class AuthController {
             UserDTO newUser = userService.register(email, password, userRole);
             
             session.setAttribute("user", newUser);
-            session.setAttribute("username", newUser.getEmail());
+            session.setAttribute("email", newUser.getEmail());
             session.setAttribute("role", newUser.getRole().toString());
-            
+            session.setAttribute("name", newUser.getName());
+
             switch (userRole) {
-                case ADMIN:
-                    return "redirect:/admin/home";
+                case MANAGER:
+                    return "redirect:/manager/home";
                 case SELLER:
                     return "redirect:/seller/home";
                 case BUYER:

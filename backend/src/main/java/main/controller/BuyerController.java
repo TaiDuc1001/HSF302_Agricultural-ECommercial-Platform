@@ -27,6 +27,7 @@ public class BuyerController {
         }
 
         model.addAttribute("user", user);
+        model.addAttribute("name", user.getName());
         model.addAttribute("totalOrders", 3);
         model.addAttribute("cartItems", 2);
         model.addAttribute("pendingReviews", 1);

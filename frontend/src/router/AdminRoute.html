@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Route</title>
+    <title>Manager Route</title>
 </head>
 <body>
-    <div th:fragment="adminRoute" id="admin-route-container">
-        <div id="admin-content"></div>
+    <div th:fragment="managerRoute" id="manager-route-container">
+        <div id="manager-content"></div>
     </div>
 
     <script th:inline="javascript">
-        const AdminRoute = {
+        const ManagerRoute = {
             init(contentLoader) {
                 const user = AuthContext.getCurrentUser();
                 const currentLocation = window.location.pathname;
@@ -22,7 +22,7 @@
                     return false;
                 }
 
-                if (user.role !== 'admin') {
+                if (user.role !== 'manager') {
                     window.location.href = '/';
                     return false;
                 }
@@ -34,15 +34,15 @@
             },
 
             loadContent(html) {
-                const container = document.getElementById('admin-content');
+                const container = document.getElementById('manager-content');
                 if (container) {
                     container.innerHTML = html;
                 }
             },
 
-            checkAdminAccess() {
+            checkManagerAccess() {
                 const user = AuthContext.getCurrentUser();
-                return user && user.role === 'admin';
+                return user && user.role === 'manager';
             },
 
             redirectUnauthorized() {
@@ -56,7 +56,7 @@
             }
         };
 
-        window.AdminRoute = AdminRoute;
+        window.ManagerRoute = ManagerRoute;
     </script>
 </body>
 </html>
