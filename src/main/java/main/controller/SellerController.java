@@ -1,6 +1,8 @@
 package main.controller;
 
 import main.dto.UserDTO;
+import main.enumerators.Role;
+import main.service.user.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,9 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/seller")
 public class SellerController {
+
+    UserService userService;
 
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
@@ -83,5 +89,10 @@ public class SellerController {
         }
 
         return "seller/add-product";
+    }
+
+    @GetMapping()
+    public List<UserDTO> getAllSellers() {
+        return userService.getUsersByRole(Role.valueOf("SELLER"));
     }
 }
