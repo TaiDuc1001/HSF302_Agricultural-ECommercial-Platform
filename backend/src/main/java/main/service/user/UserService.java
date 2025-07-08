@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface UserService {
     public abstract UserDTO login(String email, String password);
+    public abstract UserDTO register(String email, String password, Role role);
     public abstract List<UserDTO> getAllUsers();
     public abstract UserDTO getUserById(Long id);
     public abstract List<UserDTO> getUsersByRole(Role role);

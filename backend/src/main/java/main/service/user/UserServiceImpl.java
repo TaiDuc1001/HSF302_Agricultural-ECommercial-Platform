@@ -18,6 +18,24 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    public UserDTO register(String email, String password, Role role) {
+        User existingUser = userRepository.findUserByEmail(email);
+        if (existingUser != null) {
+            throw new IllegalArgumentException("User with this email already exists");
+        }
+        
+        User newUser = User.builder()
+                .email(email)
+                .password(password)
+                .role(role)
+                .isActive(true)
+                .build();
+        
+        User savedUser = userRepository.save(newUser);
+        return toDTO(savedUser);
+    }
+
+    @Override
     public UserDTO login(String email, String password) {
         User user = userRepository.findUserByEmailAndPassword(email, password);
         if(user == null){

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - AgriMarket</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <nav class="bg-green-700 text-white p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold">AgriMarket</h1>
+                <div class="flex space-x-4">
+                    <a href="/buyer/home" class="hover:text-green-200">Dashboard</a>
+                    <a href="/auth/logout" class="hover:text-green-200">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto p-8">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Shopping Cart</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div id="cart-items">
+                                <!-- Cart items will be loaded here by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Order Summary</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Subtotal</span>
+                                    <span id="subtotal" class="font-semibold">$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Shipping</span>
+                                    <span class="font-semibold">$5.99</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Tax</span>
+                                    <span id="tax" class="font-semibold">$0.00</span>
+                                </div>
+                                <div class="border-t pt-3 flex justify-between text-lg font-bold">
+                                    <span>Total</span>
+                                    <span id="total" class="text-green-600">$5.99</span>
+                                </div>
+                            </div>
+                            <button onclick="proceedToCheckout()" class="w-full mt-6 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
+                                Proceed to Checkout
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6 bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                            <div class="space-y-3">
+                                <a href="/products" class="block w-full text-center bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200 transition-colors">
+                                    Continue Shopping
+                                </a>
+                                <a href="/buyer/orders" class="block w-full text-center bg-blue-100 text-blue-700 py-2 rounded hover:bg-blue-200 transition-colors">
+                                    View Orders
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cartItems = [
+            {
+                id: 1,
+                name: 'Organic Tomatoes',
+                image: 'https://images.unsplash.com/photo-1546470427-e9ce96e89b2b?auto=format&fit=crop&w=96&h=96',
+                quantity: 2,
+                price: 4.99,
+                seller: 'Green Farm'
+            },
+            {
+                id: 2,
+                name: 'Fresh Lettuce',
+                image: 'https://images.unsplash.com/photo-1622205313162-be1d5712a43f?auto=format&fit=crop&w=96&h=96',
+                quantity: 1,
+                price: 2.99,
+                seller: 'Sunny Gardens'
+            }
+        ];
+
+        function loadCartItems() {
+            const container = document.getElementById('cart-items');
+            
+            if (cartItems.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 10H6L5 9z"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Your cart is empty</h3>
+                        <p class="text-gray-500 mb-4">Start adding some fresh products to your cart!</p>
+                        <a href="/products" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            Shop Now
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            const itemsHtml = cartItems.map(item => `
+                <div class="flex items-center justify-between border-b pb-4 mb-4 last:border-b-0 last:mb-0">
+                    <div class="flex items-center space-x-4">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-lg object-cover">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">${item.name}</h4>
+                            <p class="text-sm text-gray-600">Sold by ${item.seller}</p>
+                            <p class="text-lg font-bold text-green-600">$${item.price.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                            </svg>
+                        </button>
+                        <span class="w-8 text-center font-semibold">${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </button>
+                        <button onclick="removeFromCart(${item.id})" class="ml-4 text-red-600 hover:text-red-800">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = itemsHtml;
+            updateTotals();
+        }
+
+        function updateQuantity(id, change) {
+            const item = cartItems.find(item => item.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(id);
+                } else {
+                    loadCartItems();
+                }
+            }
+        }
+
+        function removeFromCart(id) {
+            const index = cartItems.findIndex(item => item.id === id);
+            if (index > -1) {
+                cartItems.splice(index, 1);
+                loadCartItems();
+            }
+        }
+
+        function updateTotals() {
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.08;
+            const shipping = cartItems.length > 0 ? 5.99 : 0;
+            const total = subtotal + tax + shipping;
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function proceedToCheckout() {
+            if (cartItems.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            window.location.href = '/buyer/checkout';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartItems();
+        });
+    </script>
+</body>
+</html>
