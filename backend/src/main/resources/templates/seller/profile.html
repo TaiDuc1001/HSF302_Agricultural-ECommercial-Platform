@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Profile - AgriMarket</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <nav class="bg-green-700 text-white p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold">AgriMarket</h1>
+                <div class="flex space-x-4">
+                    <a href="/seller/home" class="hover:text-green-200">Dashboard</a>
+                    <a href="/auth/logout" class="hover:text-green-200">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto p-8">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8">Seller Profile</h1>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Business Information</h2>
+                            <form id="profile-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Business Name</label>
+                                        <input type="text" id="businessName" name="businessName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Contact Person</label>
+                                        <input type="text" id="contactPerson" name="contactPerson" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                        <input type="email" id="email" name="email" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" th:value="${user != null ? user.email : ''}" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                                        <input type="tel" id="phone" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Business Address</label>
+                                        <textarea id="address" name="address" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Business Description</label>
+                                        <textarea id="description" name="description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Tell customers about your farm and products..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end mt-6">
+                                    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Business Documents</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                    <div class="flex items-center">
+                                        <svg class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800">Business License</h4>
+                                            <p class="text-sm text-gray-600">business_license.pdf</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Verified</span>
+                                </div>
+                                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                    <div class="flex items-center">
+                                        <svg class="w-8 h-8 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800">Tax Certificate</h4>
+                                            <p class="text-sm text-gray-600">tax_certificate.pdf</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">Pending</span>
+                                </div>
+                                <button class="w-full mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                                    Upload Documents
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Bank Information</h2>
+                            <form id="bank-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
+                                        <input type="text" id="bankName" name="bankName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
+                                        <input type="text" id="accountNumber" name="accountNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Routing Number</label>
+                                        <input type="text" id="routingNumber" name="routingNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Account Holder Name</label>
+                                        <input type="text" id="accountHolder" name="accountHolder" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    </div>
+                                </div>
+                                <div class="flex justify-end mt-6">
+                                    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
+                                        Update Bank Info
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div class="text-center">
+                                <div class="relative inline-block">
+                                    <img id="business-logo" src="https://ui-avatars.com/api/?name=Farm&background=22c55e&color=fff&size=96" alt="Business Logo" class="w-24 h-24 rounded-full border-4 border-green-200" />
+                                    <button onclick="changeLogo()" class="absolute bottom-0 right-0 bg-green-600 text-white rounded-full p-1 hover:bg-green-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2-2H5a2 2 0 01-2-2V9z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <h3 id="business-display-name" class="mt-4 text-xl font-semibold text-gray-800">Green Valley Farm</h3>
+                                <p id="business-email" class="text-gray-600" th:text="${user != null ? user.email : 'seller@example.com'}">seller@example.com</p>
+                                <div class="mt-4">
+                                    <span id="verification-status" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Verified Seller
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Business Statistics</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total Products</span>
+                                    <span class="font-semibold">24</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total Sales</span>
+                                    <span class="font-semibold">$12,450</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Customer Rating</span>
+                                    <span class="font-semibold">4.8/5</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Member Since</span>
+                                    <span class="font-semibold">Jan 2024</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                            <div class="space-y-3">
+                                <a href="/seller/products" class="block w-full text-center bg-green-100 text-green-700 py-2 rounded hover:bg-green-200 transition-colors">
+                                    Manage Products
+                                </a>
+                                <a href="/seller/orders" class="block w-full text-center bg-blue-100 text-blue-700 py-2 rounded hover:bg-blue-200 transition-colors">
+                                    View Orders
+                                </a>
+                                <a href="/seller/add-product" class="block w-full text-center bg-purple-100 text-purple-700 py-2 rounded hover:bg-purple-200 transition-colors">
+                                    Add New Product
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sellerProfile = {
+            businessName: 'Green Valley Farm',
+            contactPerson: 'John Smith',
+            email: /*[[${user != null ? user.email : 'seller@example.com'}]]*/ 'seller@example.com',
+            phone: '+1 (555) 987-6543',
+            address: '456 Farm Road, Valley, State 54321',
+            description: 'We are a family-owned organic farm specializing in fresh vegetables and herbs. Our commitment to sustainable farming practices ensures the highest quality produce for our customers.',
+            bankInfo: {
+                bankName: 'Valley Bank',
+                accountNumber: '****1234',
+                routingNumber: '123456789',
+                accountHolder: 'Green Valley Farm LLC'
+            }
+        };
+
+        function loadProfile() {
+            document.getElementById('businessName').value = sellerProfile.businessName;
+            document.getElementById('contactPerson').value = sellerProfile.contactPerson;
+            document.getElementById('email').value = sellerProfile.email;
+            document.getElementById('phone').value = sellerProfile.phone;
+            document.getElementById('address').value = sellerProfile.address;
+            document.getElementById('description').value = sellerProfile.description;
+            
+            document.getElementById('bankName').value = sellerProfile.bankInfo.bankName;
+            document.getElementById('accountNumber').value = sellerProfile.bankInfo.accountNumber;
+            document.getElementById('routingNumber').value = sellerProfile.bankInfo.routingNumber;
+            document.getElementById('accountHolder').value = sellerProfile.bankInfo.accountHolder;
+            
+            document.getElementById('business-display-name').textContent = sellerProfile.businessName;
+            document.getElementById('business-email').textContent = sellerProfile.email;
+        }
+
+        function changeLogo() {
+            alert('Logo change functionality would be implemented here');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+
+            document.getElementById('profile-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                sellerProfile.businessName = document.getElementById('businessName').value;
+                sellerProfile.contactPerson = document.getElementById('contactPerson').value;
+                sellerProfile.phone = document.getElementById('phone').value;
+                sellerProfile.address = document.getElementById('address').value;
+                sellerProfile.description = document.getElementById('description').value;
+                
+                document.getElementById('business-display-name').textContent = sellerProfile.businessName;
+                
+                alert('Profile updated successfully!');
+            });
+
+            document.getElementById('bank-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                sellerProfile.bankInfo = {
+                    bankName: document.getElementById('bankName').value,
+                    accountNumber: document.getElementById('accountNumber').value,
+                    routingNumber: document.getElementById('routingNumber').value,
+                    accountHolder: document.getElementById('accountHolder').value
+                };
+                
+                alert('Bank information updated successfully!');
+            });
+        });
+    </script>
+</body>
+</html>

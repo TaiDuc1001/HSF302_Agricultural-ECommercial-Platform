@@ -124,8 +124,8 @@
                     return this.navigate('/login');
                 }
 
-                if (this.user.role === 'admin') {
-                    return this.loadPage('admin/dashboard');
+                if (this.user.role === 'manager') {
+                    return this.loadPage('manager/dashboard');
                 } else if (this.user.role === 'seller') {
                     return this.loadPage('seller/home');
                 } else {
@@ -165,8 +165,8 @@
                     return this.navigate('/login');
                 }
 
-                if (this.user.role === 'admin') {
-                    return this.loadPage('admin/orders');
+                if (this.user.role === 'manager') {
+                    return this.loadPage('manager/orders');
                 } else if (this.user.role === 'seller') {
                     return this.loadPage('seller/orders');
                 } else {
@@ -179,8 +179,8 @@
                     return this.loadPage('public/products');
                 }
 
-                if (this.user.role === 'admin') {
-                    return this.loadPage('admin/products');
+                if (this.user.role === 'manager') {
+                    return this.loadPage('manager/products');
                 } else if (this.user.role === 'seller') {
                     return this.loadPage('seller/products');
                 } else {
@@ -193,18 +193,18 @@
                     return this.loadPage('public/sellers');
                 }
 
-                if (this.user.role === 'admin') {
-                    return this.loadPage('admin/sellers');
+                if (this.user.role === 'manager') {
+                    return this.loadPage('manager/sellers');
                 } else {
                     return this.loadPage('public/sellers');
                 }
             },
 
             handleUsersRoute() {
-                if (!this.user || this.user.role !== 'admin') {
+                if (!this.user || this.user.role !== 'manager') {
                     return this.navigate('/');
                 }
-                return this.loadPage('admin/users');
+                return this.loadPage('manager/users');
             },
 
             handleNotFound() {

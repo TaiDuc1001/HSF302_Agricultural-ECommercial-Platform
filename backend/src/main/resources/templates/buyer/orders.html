@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - AgriMarket</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="min-h-screen bg-gray-100 p-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">My Orders</h1>
+                <div class="flex space-x-4">
+                    <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <option value="">All Orders</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <a href="/buyer/home" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <div id="orders-container" class="space-y-4">
+                <div th:if="${orders != null and !orders.empty}">
+                    <div th:each="order : ${orders}" class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800" th:text="|Order ${order.id}|">Order #001</h3>
+                                <p class="text-sm text-gray-600" th:text="|Placed on ${#temporals.format(order.orderDate, 'MMM dd, yyyy')}|">Placed on Jan 15, 2024</p>
+                                <p class="text-sm text-gray-600" th:text="|Seller: ${order.sellerName}|">Seller: Green Farm</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 rounded-full text-sm font-medium" 
+                                      th:classappend="${order.status == 'delivered'} ? 'bg-green-100 text-green-800' : 
+                                                     ${order.status == 'shipped'} ? 'bg-blue-100 text-blue-800' : 
+                                                     ${order.status == 'confirmed'} ? 'bg-yellow-100 text-yellow-800' :
+                                                     ${order.status == 'pending'} ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'"
+                                      th:text="${#strings.capitalize(order.status)}">
+                                    Delivered
+                                </span>
+                                <p class="text-lg font-bold text-gray-800 mt-1" th:text="|$${#numbers.formatDecimal(order.totalAmount, 1, 2)}|">$45.99</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 mb-4">
+                            <div th:each="item : ${order.orderItems}" class="flex items-center space-x-3 p-3 bg-gray-50 rounded">
+                                <img th:src="${item.product.imageUrl}" alt="Product" class="w-12 h-12 object-cover rounded" />
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800" th:text="${item.product.name}">Product Name</h4>
+                                    <p class="text-sm text-gray-600" th:text="|Quantity: ${item.quantity} × $${#numbers.formatDecimal(item.price, 1, 2)}|">Quantity: 2 × $5.99</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-gray-800" th:text="|$${#numbers.formatDecimal(item.quantity * item.price, 1, 2)}|">$11.98</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-4 mt-4">
+                            <h4 class="font-semibold text-gray-700 mb-2">Shipping Address</h4>
+                            <p class="text-gray-600" th:text="${order.shippingAddress}">123 Main St, City, State 12345</p>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 mt-4">
+                            <a th:href="@{/buyer/order/{id}(id=${order.id})}" class="px-4 py-2 border border-green-600 text-green-600 rounded hover:bg-green-50">
+                                View Details
+                            </a>
+                            <button th:if="${order.status == 'delivered'}" 
+                                    th:onclick="|reorderItems('${order.id}')|" 
+                                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Reorder
+                            </button>
+                            <button th:if="${order.status == 'pending' or order.status == 'confirmed'}" 
+                                    th:onclick="|cancelOrder('${order.id}')|" 
+                                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                Cancel Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${orders == null or orders.empty}" class="flex flex-col items-center justify-center py-12 bg-white rounded-lg shadow">
+                <svg class="w-24 h-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No orders found</h3>
+                <p class="text-gray-500">You haven't placed any orders yet. Start shopping to see your orders here!</p>
+                <a href="/products" class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                    Start Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function filterOrders() {
+            const statusFilter = document.getElementById('status-filter').value;
+            // Implementation for client-side filtering if needed
+            // Or redirect to same page with filter parameter
+            if (statusFilter) {
+                window.location.href = '/buyer/orders?status=' + statusFilter;
+            } else {
+                window.location.href = '/buyer/orders';
+            }
+        }
+
+        function reorderItems(orderId) {
+            if (confirm('Add all items from this order to your cart?')) {
+                fetch('/buyer/orders/' + orderId + '/reorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Items added to cart successfully!');
+                        window.location.href = '/buyer/cart';
+                    } else {
+                        alert('Failed to add items to cart. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                fetch('/buyer/orders/' + orderId + '/cancel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Order cancelled successfully.');
+                        window.location.reload();
+                    } else {
+                        alert('Failed to cancel order. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('status-filter').addEventListener('change', filterOrders);
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

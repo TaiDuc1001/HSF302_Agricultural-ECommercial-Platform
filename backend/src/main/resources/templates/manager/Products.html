@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - AgriMarket Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-green-600">AgriMarket Manager</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" th:text="|Welcome, ${name}|">Welcome, Manager</span>
+                    <a href="/manager/home" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                    <a href="/auth/logout" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="p-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Manage Products</h1>
+                <p class="text-gray-600">Monitor and manage all products on the platform</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Product Statistics</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" th:text="${totalProducts ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Total Products</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" th:text="${activeProducts ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Active Products</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600" th:text="${pendingReview ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Pending Review</div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-red-600" th:text="${rejectedProducts ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Rejected</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">All Products</h2>
+                    <div class="flex space-x-4">
+                        <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="">All Status</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="PENDING">Pending Review</option>
+                            <option value="REJECTED">Rejected</option>
+                            <option value="INACTIVE">Inactive</option>
+                        </select>
+                        <select id="category-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="">All Categories</option>
+                            <option th:each="category : ${categories}" 
+                                    th:value="${category.id}" 
+                                    th:text="${category.name}">Category</option>
+                        </select>
+                        <input type="text" id="search-products" placeholder="Search products..." 
+                               class="px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+
+                <div th:if="${products != null and not #lists.isEmpty(products)}">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div th:each="product : ${products}" class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <img th:src="${product.image != null ? product.image : '/images/default-product.jpg'}" 
+                                 th:alt="${product.name}" 
+                                 class="w-full h-48 object-cover rounded-t-lg">
+                            <div class="p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-lg font-semibold text-gray-800" th:text="${product.name}">Product Name</h3>
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium"
+                                          th:classappend="${product.status == 'ACTIVE'} ? 'bg-green-100 text-green-800' : 
+                                                         ${product.status == 'PENDING'} ? 'bg-yellow-100 text-yellow-800' : 
+                                                         ${product.status == 'REJECTED'} ? 'bg-red-100 text-red-800' : 
+                                                         'bg-gray-100 text-gray-800'"
+                                          th:text="${product.status}">ACTIVE</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2" th:text="|by ${product.sellerName}|">by Seller Name</p>
+                                <p class="text-sm text-gray-500 mb-3" th:text="${product.category.name}">Category</p>
+                                
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-lg font-bold text-green-600" th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|">$0.00</span>
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-yellow-400">★</span>
+                                        <span class="text-sm text-gray-600" th:text="${product.rating ?: '0.0'}">0.0</span>
+                                        <span class="text-xs text-gray-500" th:text="|${product.reviewCount ?: 0} reviews|">(0 reviews)</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-xs text-gray-500 mb-3" th:text="|Stock: ${product.stock} | Sold: ${product.soldCount ?: 0}|">Stock: 0 | Sold: 0</p>
+                                
+                                <div class="flex space-x-2">
+                                    <button th:onclick="|viewProduct(${product.id})|" 
+                                            class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
+                                        View Details
+                                    </button>
+                                    <button th:if="${product.status == 'PENDING'}" 
+                                            th:onclick="|approveProduct(${product.id})|" 
+                                            class="flex-1 bg-green-600 text-white py-2 px-3 rounded text-sm hover:bg-green-700">
+                                        Approve
+                                    </button>
+                                    <button th:if="${product.status == 'PENDING'}" 
+                                            th:onclick="|rejectProduct(${product.id})|" 
+                                            class="flex-1 bg-red-600 text-white py-2 px-3 rounded text-sm hover:bg-red-700">
+                                        Reject
+                                    </button>
+                                    <button th:if="${product.status == 'ACTIVE'}" 
+                                            th:onclick="|deactivateProduct(${product.id})|" 
+                                            class="flex-1 bg-gray-600 text-white py-2 px-3 rounded text-sm hover:bg-gray-700">
+                                        Deactivate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${products == null or #lists.isEmpty(products)}" 
+                     class="text-center py-8">
+                    <div class="text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"></path>
+                        </svg>
+                        <p class="text-lg font-medium">No products found</p>
+                        <p class="text-sm">Products will appear here once sellers add them</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewProduct(productId) {
+            window.location.href = '/manager/products/' + productId;
+        }
+
+        function approveProduct(productId) {
+            if (confirm('Are you sure you want to approve this product?')) {
+                updateProductStatus(productId, 'ACTIVE');
+            }
+        }
+
+        function rejectProduct(productId) {
+            const reason = prompt('Please provide a reason for rejection:');
+            if (reason) {
+                updateProductStatus(productId, 'REJECTED', reason);
+            }
+        }
+
+        function deactivateProduct(productId) {
+            if (confirm('Are you sure you want to deactivate this product?')) {
+                updateProductStatus(productId, 'INACTIVE');
+            }
+        }
+
+        function updateProductStatus(productId, status, reason = null) {
+            fetch('/manager/products/' + productId + '/status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    status: status,
+                    reason: reason 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update product status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating product status');
+            });
+        }
+
+        function filterProducts() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const categoryFilter = document.getElementById('category-filter').value;
+            const searchTerm = document.getElementById('search-products').value;
+            
+            let url = '/manager/products';
+            const params = new URLSearchParams();
+            
+            if (statusFilter) params.append('status', statusFilter);
+            if (categoryFilter) params.append('category', categoryFilter);
+            if (searchTerm) params.append('search', searchTerm);
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            window.location.href = url;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('status-filter').addEventListener('change', filterProducts);
+            document.getElementById('category-filter').addEventListener('change', filterProducts);
+            
+            const searchInput = document.getElementById('search-products');
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(filterProducts, 500);
+            });
+        });
+    </script>
+</body>
+</html>

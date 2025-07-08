@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriMarket - Agricultural E-Commerce Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex-shrink-0 flex items-center">
+                        <h1 class="text-2xl font-bold text-green-600">AgriMarket</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/products" class="text-gray-700 hover:text-green-600">Products</a>
+                    <a href="/sellers" class="text-gray-700 hover:text-green-600">Sellers</a>
+                    <div th:if="${user == null}">
+                        <a href="/auth/login" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Login</a>
+                    </div>
+                    <div th:if="${user != null}">
+                        <a th:href="@{/{role}/home(role=${user.role.toString()})}"
+                           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                           th:text="|${user.role} Dashboard|">Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="min-h-screen">
+        <!-- Hero Section -->
+        <div class="bg-gradient-to-r from-green-600 to-green-800 text-white py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Welcome to AgriMarket</h1>
+                <p class="text-xl md:text-2xl mb-8">Connect with local farmers and discover fresh agricultural products</p>
+                <a href="/public/products" class="bg-white text-green-600 px-8 py-3 rounded-lg hover:bg-gray-100 font-semibold text-lg transition-colors">
+                    Start Shopping
+                </a>
+            </div>
+        </div>
+        
+        <!-- Featured Products Section -->
+        <div class="py-12 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
+                    <p class="text-gray-600">Discover the best agricultural products from our trusted sellers</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" th:if="${featuredProducts}">
+                    <div th:each="product : ${featuredProducts}" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}" class="w-full h-48 object-cover" />
+                        <div class="p-4">
+                            <h3 class="font-semibold text-gray-800 mb-2" th:text="${product.name}"></h3>
+                            <p class="text-sm text-gray-600 mb-2">by <span th:text="${product.sellerName}"></span></p>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-lg font-bold text-green-600" th:text="${'$' + product.price}"></span>
+                                <div class="flex items-center">
+                                    <span class="text-yellow-400">★</span>
+                                    <span class="text-sm text-gray-600 ml-1" th:text="${product.rating ?: 0}"></span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mb-3" th:text="${(product.soldCount ?: 0) + ' sold'}"></p>
+                            <a th:href="@{'/public/products/' + ${product.id}}" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-center block transition-colors">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <a href="/public/products" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-semibold transition-colors">
+                        View All Products
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Choose AgriMarket?</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">We connect you directly with local farmers and agricultural producers for the freshest, highest quality products.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Fresh & Quality</h3>
+                        <p class="text-gray-600">Direct from farm to your table, ensuring maximum freshness and quality.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Local Community</h3>
+                        <p class="text-gray-600">Support local farmers and strengthen your community's agricultural economy.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Trusted & Secure</h3>
+                        <p class="text-gray-600">Verified sellers and secure transactions for your peace of mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action Section -->
+        <div class="py-16 bg-green-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Ready to Get Started?</h2>
+                        <p class="text-gray-600 mb-8">Join thousands of satisfied customers who trust AgriMarket for their agricultural needs. Browse our marketplace or become a seller today.</p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="/public/products" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold text-center transition-colors">
+                                Browse Products
+                            </a>
+                            <a href="/public/sellers" class="bg-white border border-green-600 text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 font-semibold text-center transition-colors">
+                                Meet Our Sellers
+                            </a>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=500&h=300" alt="Farm landscape" class="rounded-lg shadow-lg" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

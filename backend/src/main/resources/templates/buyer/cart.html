@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - AgriMarket</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="min-h-screen bg-gray-50 py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+                <a href="/buyer/home" class="text-green-600 hover:text-green-700 font-medium">
+                    ← Continue Shopping
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-sm">
+                        <div class="p-6 border-b border-gray-200">
+                            <h2 class="text-lg font-semibold text-gray-900">Cart Items</h2>
+                        </div>
+                        
+                        <div th:if="${cartItems != null and not #lists.isEmpty(cartItems)}">
+                            <div th:each="item : ${cartItems}" class="p-6 border-b border-gray-200 last:border-b-0">
+                                <div class="flex items-center space-x-4">
+                                    <img th:src="${item.product.image != null ? item.product.image : '/images/default-product.jpg'}" 
+                                         th:alt="${item.product.name}" 
+                                         class="w-20 h-20 object-cover rounded-lg">
+                                    
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-medium text-gray-900" th:text="${item.product.name}">Product Name</h3>
+                                        <p class="text-sm text-gray-500" th:text="|Seller: ${item.product.sellerName}|">Seller: Seller Name</p>
+                                        <p class="text-lg font-semibold text-green-600 mt-1" 
+                                           th:text="|$${#numbers.formatDecimal(item.product.price, 1, 2)}|">$0.00</p>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex items-center border rounded-lg">
+                                            <button type="button" 
+                                                    class="px-3 py-1 text-gray-500 hover:text-gray-700"
+                                                    th:onclick="|updateQuantity(${item.id}, ${item.quantity - 1})|">
+                                                -
+                                            </button>
+                                            <span class="px-3 py-1 border-x" th:text="${item.quantity}">1</span>
+                                            <button type="button" 
+                                                    class="px-3 py-1 text-gray-500 hover:text-gray-700"
+                                                    th:onclick="|updateQuantity(${item.id}, ${item.quantity + 1})|">
+                                                +
+                                            </button>
+                                        </div>
+                                        
+                                        <button type="button" 
+                                                class="text-red-500 hover:text-red-700"
+                                                th:onclick="|removeFromCart(${item.id})|">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${cartItems == null or #lists.isEmpty(cartItems)}" class="p-12 text-center">
+                            <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5 5M17 13l-2.5 5"></path>
+                            </svg>
+                            <h3 class="text-xl font-medium text-gray-900 mb-2">Your cart is empty</h3>
+                            <p class="text-gray-500 mb-6">Add some products to get started</p>
+                            <a href="/buyer/home" class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
+                                Start Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8" th:if="${cartItems != null and not #lists.isEmpty(cartItems)}">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Subtotal</span>
+                                <span th:text="|$${#numbers.formatDecimal(subtotal ?: 0, 1, 2)}|">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Tax</span>
+                                <span th:text="|$${#numbers.formatDecimal(tax ?: 0, 1, 2)}|">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Shipping</span>
+                                <span th:text="|$${#numbers.formatDecimal(shipping ?: 0, 1, 2)}|">$0.00</span>
+                            </div>
+                            <div class="border-t pt-3">
+                                <div class="flex justify-between text-lg font-semibold">
+                                    <span>Total</span>
+                                    <span th:text="|$${#numbers.formatDecimal(total ?: 0, 1, 2)}|">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="/buyer/checkout" 
+                           class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors text-center block">
+                            Proceed to Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateQuantity(itemId, newQuantity) {
+            if (newQuantity < 1) {
+                removeFromCart(itemId);
+                return;
+            }
+            
+            fetch('/buyer/cart/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ itemId: itemId, quantity: newQuantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update quantity');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating quantity');
+            });
+        }
+
+        function removeFromCart(itemId) {
+            if (confirm('Are you sure you want to remove this item from your cart?')) {
+                fetch('/buyer/cart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ itemId: itemId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to remove item');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error removing item');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

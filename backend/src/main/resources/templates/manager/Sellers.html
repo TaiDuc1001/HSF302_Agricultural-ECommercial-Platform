@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Sellers - AgriMarket Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-green-600">AgriMarket Manager</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" th:text="|Welcome, ${name}|">Welcome, Manager</span>
+                    <a href="/manager/home" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                    <a href="/auth/logout" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="p-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Manage Sellers</h1>
+                <p class="text-gray-600">Monitor and manage all seller accounts on the platform</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Seller Statistics</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600" th:text="${totalSellers ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Total Sellers</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600" th:text="${activeSellers ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Active Sellers</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600" th:text="${pendingVerification ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Pending Verification</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600" th:text="${verifiedSellers ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Verified</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">All Sellers</h2>
+                    <div class="flex space-x-4">
+                        <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="">All Status</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                            <option value="SUSPENDED">Suspended</option>
+                        </select>
+                        <select id="verification-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="">All Verification</option>
+                            <option value="VERIFIED">Verified</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
+                        <input type="text" id="search-sellers" placeholder="Search sellers..." 
+                               class="px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+
+                <div th:if="${sellers != null and not #lists.isEmpty(sellers)}">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div th:each="seller : ${sellers}" class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center">
+                                    <img th:src="@{https://ui-avatars.com/api/?name={name}&background=8b5cf6&color=fff&size=48(name=${seller.name})}" 
+                                         alt="Seller Avatar" class="w-12 h-12 rounded-full mr-4" />
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800" th:text="${seller.name}">Seller Name</h3>
+                                        <p class="text-sm text-gray-600" th:text="|ID: ${seller.id}|">ID: 1</p>
+                                        <p class="text-sm text-gray-600" th:text="${seller.email}">seller@example.com</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium"
+                                          th:classappend="${seller.isActive} ? 'bg-green-100 text-green-800' : 
+                                                         ${seller.isSuspended} ? 'bg-red-100 text-red-800' : 
+                                                         'bg-gray-100 text-gray-800'"
+                                          th:text="${seller.isSuspended} ? 'SUSPENDED' : 
+                                                   ${seller.isActive} ? 'ACTIVE' : 'INACTIVE'">ACTIVE</span>
+                                    <br>
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium mt-1 inline-block"
+                                          th:classappend="${seller.isVerified} ? 'bg-blue-100 text-blue-800' : 
+                                                         ${seller.verificationStatus == 'PENDING'} ? 'bg-yellow-100 text-yellow-800' : 
+                                                         'bg-gray-100 text-gray-800'"
+                                          th:text="${seller.isVerified} ? 'VERIFIED' : 
+                                                   ${seller.verificationStatus ?: 'PENDING'}">PENDING</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-gray-800" th:text="${seller.productCount ?: 0}">0</div>
+                                    <div class="text-xs text-gray-600">Products</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-gray-800" th:text="${seller.orderCount ?: 0}">0</div>
+                                    <div class="text-xs text-gray-600">Orders</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-green-600" th:text="|$${#numbers.formatDecimal(seller.totalRevenue ?: 0, 1, 2)}|">$0.00</div>
+                                    <div class="text-xs text-gray-600">Revenue</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center mb-4">
+                                <div class="flex items-center mr-4">
+                                    <span class="text-yellow-400 mr-1">★</span>
+                                    <span class="text-sm text-gray-600" th:text="${seller.rating ?: '0.0'}">0.0</span>
+                                    <span class="text-xs text-gray-500 ml-1" th:text="|${seller.reviewCount ?: 0} reviews|">(0 reviews)</span>
+                                </div>
+                                <div class="text-sm text-gray-600" th:text="|Joined: ${#temporals.format(seller.joinedDate, 'MMM yyyy')}|">Joined: Jan 2024</div>
+                            </div>
+
+                            <div th:if="${seller.address}" class="mb-4">
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Address:</span>
+                                    <span th:text="${seller.address}">Seller Address</span>
+                                </p>
+                            </div>
+
+                            <div class="flex space-x-2">
+                                <button th:onclick="|viewSeller(${seller.id})|" 
+                                        class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
+                                    View Details
+                                </button>
+                                <button th:if="${not seller.isVerified and seller.verificationStatus == 'PENDING'}" 
+                                        th:onclick="|verifySeller(${seller.id})|" 
+                                        class="flex-1 bg-green-600 text-white py-2 px-3 rounded text-sm hover:bg-green-700">
+                                    Verify
+                                </button>
+                                <button th:if="${seller.isActive and not seller.isSuspended}" 
+                                        th:onclick="|suspendSeller(${seller.id})|" 
+                                        class="flex-1 bg-red-600 text-white py-2 px-3 rounded text-sm hover:bg-red-700">
+                                    Suspend
+                                </button>
+                                <button th:if="${seller.isSuspended}" 
+                                        th:onclick="|unsuspendSeller(${seller.id})|" 
+                                        class="flex-1 bg-yellow-600 text-white py-2 px-3 rounded text-sm hover:bg-yellow-700">
+                                    Unsuspend
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${sellers == null or #lists.isEmpty(sellers)}" 
+                     class="text-center py-8">
+                    <div class="text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <p class="text-lg font-medium">No sellers found</p>
+                        <p class="text-sm">Sellers will appear here once they register</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewSeller(sellerId) {
+            window.location.href = '/manager/sellers/' + sellerId;
+        }
+
+        function verifySeller(sellerId) {
+            if (confirm('Are you sure you want to verify this seller?')) {
+                updateSellerVerification(sellerId, 'VERIFIED');
+            }
+        }
+
+        function suspendSeller(sellerId) {
+            const reason = prompt('Please provide a reason for suspension:');
+            if (reason) {
+                updateSellerStatus(sellerId, 'suspend', reason);
+            }
+        }
+
+        function unsuspendSeller(sellerId) {
+            if (confirm('Are you sure you want to unsuspend this seller?')) {
+                updateSellerStatus(sellerId, 'unsuspend');
+            }
+        }
+
+        function updateSellerVerification(sellerId, status) {
+            fetch('/manager/sellers/' + sellerId + '/verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update seller verification');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating seller verification');
+            });
+        }
+
+        function updateSellerStatus(sellerId, action, reason = null) {
+            fetch('/manager/sellers/' + sellerId + '/' + action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update seller status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating seller status');
+            });
+        }
+
+        function filterSellers() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const verificationFilter = document.getElementById('verification-filter').value;
+            const searchTerm = document.getElementById('search-sellers').value;
+            
+            let url = '/manager/sellers';
+            const params = new URLSearchParams();
+            
+            if (statusFilter) params.append('status', statusFilter);
+            if (verificationFilter) params.append('verification', verificationFilter);
+            if (searchTerm) params.append('search', searchTerm);
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            window.location.href = url;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('status-filter').addEventListener('change', filterSellers);
+            document.getElementById('verification-filter').addEventListener('change', filterSellers);
+            
+            const searchInput = document.getElementById('search-sellers');
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(filterSellers, 500);
+            });
+        });
+    </script>
+</body>
+</html>
