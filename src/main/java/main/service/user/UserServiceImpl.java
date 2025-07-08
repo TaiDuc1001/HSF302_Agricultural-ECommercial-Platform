@@ -3,7 +3,7 @@ package main.service.user;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import main.dto.UserDTO;
-import main.entities.User;
+import main.pojo.User;
 import main.enumerators.Role;
 import main.mapper.UserMapper;
 import main.repository.UserRepository;

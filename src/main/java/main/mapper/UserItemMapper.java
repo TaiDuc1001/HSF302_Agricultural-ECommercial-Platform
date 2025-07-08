@@ -1,7 +1,7 @@
 package main.mapper;
 
 import main.dto.UserItemDTO;
-import main.entities.UserItem;
+import main.pojo.UserItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

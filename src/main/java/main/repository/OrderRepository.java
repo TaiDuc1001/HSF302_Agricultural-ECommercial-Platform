@@ -1,6 +1,6 @@
 package main.repository;
 
-import main.entities.Order;
+import main.pojo.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

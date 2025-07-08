@@ -1,7 +1,7 @@
 package main.service.order;
 
 import main.dto.OrderDTO;
-import main.entities.Order;
+import main.pojo.Order;
 
 import java.util.List;
 

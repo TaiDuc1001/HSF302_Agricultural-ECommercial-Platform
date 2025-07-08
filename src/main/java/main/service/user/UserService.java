@@ -1,7 +1,7 @@
 package main.service.user;
 
 import main.dto.UserDTO;
-import main.entities.User;
+import main.pojo.User;
 import main.enumerators.Role;
 
 import java.util.List;

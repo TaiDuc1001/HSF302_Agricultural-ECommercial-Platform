@@ -1,7 +1,7 @@
 package main.mapper;
 
 import main.dto.UserDTO;
-import main.entities.User;
+import main.pojo.User;
 import org.mapstruct.Mapper;
 
 import java.util.List;

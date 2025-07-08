@@ -1,8 +1,8 @@
-package main.controller;
+package main.controller.api;
 
 import lombok.RequiredArgsConstructor;
 import main.dto.UserDTO;
-import main.entities.User;
+import main.pojo.User;
 import main.enumerators.Role;
 import main.service.user.UserService;
 import org.springframework.web.bind.annotation.*;

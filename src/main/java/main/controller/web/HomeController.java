@@ -1,4 +1,4 @@
-package main.controller;
+package main.controller.web;
 
 import main.dto.UserDTO;
 import org.springframework.stereotype.Controller;
