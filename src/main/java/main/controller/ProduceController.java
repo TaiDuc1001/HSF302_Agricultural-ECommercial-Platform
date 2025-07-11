@@ -4,6 +4,7 @@ package main.controller;
 import jakarta.servlet.http.HttpSession;
 import main.dto.ProduceDTO;
 import main.dto.ProduceDetailDTO;
+import main.pojo.Produce;
 import main.service.produce.ProduceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -19,13 +20,13 @@ public class ProduceController {
     private ProduceService produceService; // Assuming you have a service to handle produce logic
 
     @GetMapping
-    public List<ProduceDTO> getAllProduce() {
+    public List<Produce> getAllProduce() {
         return produceService.getAllProduce();
 
     }
 
     @GetMapping("/{id}")
-    public ProduceDetailDTO getProduceDetail(@PathVariable Long id) {
+    public Produce getProduceDetail(@PathVariable Long id) {
         return produceService.getProduceById(id);
     }
 

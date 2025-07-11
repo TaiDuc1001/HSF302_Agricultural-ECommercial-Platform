@@ -47,36 +47,36 @@
         <div class="w-full max-w-2xl">
             <h3 class="text-xl font-bold text-green-800 mb-4">Recommended for You</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div th:if="${recommendedProducts != null and not #lists.isEmpty(recommendedProducts)}" 
-                     th:each="product : ${recommendedProducts}" 
+                <div th:if="${produces != null and not #lists.isEmpty(produces)}"
+                     th:each="produce : ${produces}"
                      class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
-                    <img th:src="${product.image != null ? product.image : '/images/default-product.jpg'}" 
-                         th:alt="${product.name}" 
+                    <img th:src="${produce.imgUrl != null ? produce.imgUrl : '/images/default-produce.jpg'}"
+                         th:alt="${produce.name}"
                          class="w-full h-32 object-cover rounded mb-3" />
-                    <h4 class="font-semibold text-gray-800 mb-1" th:text="${product.name}">Product Name</h4>
-                    <p class="text-sm text-gray-600 mb-2" th:text="|by ${product.sellerName}|">by Seller</p>
+                    <h4 class="font-semibold text-gray-800 mb-1" th:text="${produce.name}">Product Name</h4>
+                    <p class="text-sm text-gray-600 mb-2" th:text="|by ${produce.user.name}|">by Seller</p>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-lg font-bold text-green-600" th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|">$0.00</span>
+                        <span class="text-lg font-bold text-green-600" th:text="|$${#numbers.formatDecimal(produce.price, 1, 2)}|">$0.00</span>
                         <div class="flex items-center gap-1">
                             <span class="text-yellow-400">★</span>
-                            <span class="text-sm text-gray-600" th:text="${product.rating != null ? product.rating : '0.0'}">0.0</span>
+                            <span class="text-sm text-gray-600" th:text="${produce.averageRating != null ? produce.averageRating : '0.0'}">0.0</span>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-500" th:text="|${product.soldCount != null ? product.soldCount : 0} sold|">0 sold</p>
+<!--                    <p class="text-xs text-gray-500" th:text="|${produce.soldCount != null ? produce.soldCount : 0} sold|">0 sold</p>-->
                     <button class="w-full mt-3 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors"
-                            th:onclick="|addToCart(${product.id})|">
+                            th:onclick="|addToCart(${produce.id},${user.id})|">
                         Add to Cart
                     </button>
                 </div>
                 
-                <div th:if="${recommendedProducts == null or #lists.isEmpty(recommendedProducts)}" 
+                <div th:if="${produces == null or #lists.isEmpty(produces)}"
                      class="col-span-full text-center py-8">
                     <div class="text-gray-500">
                         <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"></path>
                         </svg>
-                        <p class="text-lg font-medium">No products available</p>
-                        <p class="text-sm">Check back later for new products</p>
+                        <p class="text-lg font-medium">No produces available</p>
+                        <p class="text-sm">Check back later for new produces</p>
                     </div>
                 </div>
             </div>
@@ -84,25 +84,25 @@
     </div>
 
     <script>
-        function addToCart(productId) {
-            fetch('/buyer/cart/add', {
+        function addToCart(produceId, userId) {
+            fetch('/api/user-items', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ productId: productId, quantity: 1 })
+                body: JSON.stringify({ produceId: produceId, quantity: 1, userId: userId})
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
+                if (data) {
                     alert('Product added to cart successfully!');
                 } else {
-                    alert('Failed to add product to cart');
+                    alert('Failed to add produce to cart');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error adding product to cart');
+                alert('Error adding produce to cart');
             });
         }
     </script>

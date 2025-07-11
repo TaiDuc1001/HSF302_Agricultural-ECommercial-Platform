@@ -2,29 +2,30 @@ package main.controller;
 
 import lombok.RequiredArgsConstructor;
 import main.dto.UserItemDTO;
+import main.pojo.UserItem;
 import main.service.user_item.UserItemService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/user-items")
+@RequestMapping("/api/user-items")
 @RequiredArgsConstructor
 public class UserItemController {
     private final UserItemService userItemService;
 
     @GetMapping("/user/{userId}")
-    public List<UserItemDTO> getActiveUserItemByUserId(@PathVariable Long userId) {
+    public List<UserItem> getActiveUserItemByUserId(@PathVariable Long userId) {
         return userItemService.findActiveUserItemsByUserId(userId);
     }
 
     @PostMapping
     public UserItemDTO createUserItem(@RequestBody UserItemDTO userItemDTO) {
-        return userItemService.createUserItem(userItemDTO);
+        return userItemService.addUserItem(userItemDTO);
     }
 
     @PutMapping("/{id}")
-    public UserItemDTO updateUserItem(@PathVariable Long id, @RequestBody UserItemDTO userItemDTO) {
+    public UserItem updateUserItem(@PathVariable Long id, @RequestBody UserItemDTO userItemDTO) {
         return userItemService.updateUserItem(id, userItemDTO);
     }
 
@@ -34,10 +35,15 @@ public class UserItemController {
     }
 
     @DeleteMapping("/user/{userId}")
-    public List<UserItemDTO> disableUserItems(@PathVariable Long userId) {
+    public List<UserItem> disableUserItems(@PathVariable Long userId) {
         List<Long> userItemIds = userItemService.findActiveUserItemsByUserId(userId).stream()
-                .map(UserItemDTO::getId)
+                .map(UserItem::getId)
                 .toList();
         return userItemService.disableUserItems(userItemIds);
+    }
+
+    @DeleteMapping("/{id}")
+    public UserItemDTO disableUserItem(@PathVariable Long id) {
+        return userItemService.disableUserItem(id);
     }
 }

@@ -1,9 +1,14 @@
 package main.controller;
 
 import main.dto.OrderDTO;
+import main.dto.ProduceDTO;
 import main.dto.UserDTO;
 import main.pojo.Order;
+import main.pojo.Produce;
+import main.pojo.UserItem;
 import main.service.order.OrderService;
+import main.service.produce.ProduceService;
+import main.service.user_item.UserItemService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +24,13 @@ import java.util.List;
 public class BuyerController {
 
     private final OrderService orderService;
+    private final ProduceService produceService;
+    private final UserItemService userItemService;
 
-    public BuyerController(OrderService orderService) {
+    public BuyerController(OrderService orderService, ProduceService produceService, UserItemService userItemService) {
         this.orderService = orderService;
+        this.produceService = produceService;
+        this.userItemService = userItemService;
     }
 
     @GetMapping("/dashboard")
@@ -36,11 +45,13 @@ public class BuyerController {
             return "redirect:/auth/login";
         }
 
+
         model.addAttribute("user", user);
         model.addAttribute("name", user.getName());
         model.addAttribute("totalOrders", 3);
         model.addAttribute("cartItems", 2);
         model.addAttribute("pendingReviews", 1);
+        model.addAttribute("produces", produceService.getProduceWithAverageRating());
         
         return "buyer/home";
     }
@@ -85,7 +96,7 @@ public class BuyerController {
         if (user == null || !"BUYER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
-
+        model.addAttribute("cartItems", userItemService.findActiveUserItemsByUserId(user.getId()));
         return "buyer/cart";
     }
 

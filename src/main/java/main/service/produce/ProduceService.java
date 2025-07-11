@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProduceService {
-    List<ProduceDTO> getAllProduce();
-    ProduceDetailDTO getProduceById(Long id);
+    List<Produce> getAllProduce();
+    Produce getProduceById(Long id);
+    List<Produce> getProduceWithAverageRating();
+//    List<Produce> getProduceWithSoldCount();
 }

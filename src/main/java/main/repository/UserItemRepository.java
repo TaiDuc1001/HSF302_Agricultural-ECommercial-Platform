@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface UserItemRepository extends JpaRepository<UserItem, Long> {
     List<UserItem> findUserItemsByUserId(Long userId);
+
+    UserItem findByUserIdAndProduceIdAndIsActive(Long userId, Long produceId, Boolean isActive);
 }
