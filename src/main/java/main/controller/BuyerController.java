@@ -137,29 +137,4 @@ public class BuyerController {
         return "buyer/order-detail";
     }
 
-//    @GetMapping("/order-detail/{id}")
-//    public String orderDetail(@PathVariable Long id, Model model) {
-//        // Create fake order details
-//        List<FakeOrderDetail> orderDetails = Arrays.asList(
-//                new FakeOrderDetail("Fresh Tomatoes", "Green Valley Farm", 3, 4.99, "/images/tomatoes.jpg"),
-//                new FakeOrderDetail("Organic Carrots", "Sunshine Gardens", 2, 6.50, "/images/carrots.jpg"),
-//                new FakeOrderDetail("Bell Peppers", "Mountain View Farm", 4, 3.25, "/images/peppers.jpg")
-//        );
-//
-//        // Create fake order
-//        FakeOrder order = new FakeOrder(
-//                id,
-//                LocalDateTime.now().minusDays(3),
-//                "delivered",
-//                43.47,
-//                5.00,
-//                "SAVE10",
-//                38.47,
-//                "Credit Card",
-//                orderDetails
-//        );
-//
-//        model.addAttribute("order", order);
-//        return "buyer/order-detail";
-//    }
 }
