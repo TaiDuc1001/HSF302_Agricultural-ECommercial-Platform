@@ -24,84 +24,46 @@
                         <form id="checkoutForm" th:action="@{/buyer/checkout/process}" method="post" class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
                                     <input type="text" 
-                                           id="firstName" 
-                                           name="firstName" 
-                                           th:value="${shippingInfo.firstName}" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           required>
-                                </div>
-                                <div>
-                                    <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                    <input type="text" 
-                                           id="lastName" 
-                                           name="lastName" 
-                                           th:value="${shippingInfo.lastName}" 
+                                           id="name"
+                                           name="name"
+                                           th:value="${user.name}"
                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                            required>
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                                 <input type="email" 
                                        id="email" 
                                        name="email" 
-                                       th:value="${shippingInfo.email}" 
+                                       th:value="${user.email}"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                        required>
                             </div>
-                            
+
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                                 <input type="tel" 
                                        id="phone" 
                                        name="phone" 
-                                       th:value="${shippingInfo.phone}" 
+                                       th:value="${user.phone}"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                        required>
                             </div>
-                            
+
                             <div>
-                                <label for="street" class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
-                                <input type="text" 
-                                       id="street" 
-                                       name="street" 
-                                       th:value="${shippingInfo.street}" 
+                                <label for="street" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                <input type="text"
+                                       id="street"
+                                       name="street"
+                                       th:value="${user.address}"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                        required>
                             </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                                    <input type="text" 
-                                           id="city" 
-                                           name="city" 
-                                           th:value="${shippingInfo.city}" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           required>
-                                </div>
-                                <div>
-                                    <label for="state" class="block text-sm font-medium text-gray-700 mb-1">State</label>
-                                    <input type="text" 
-                                           id="state" 
-                                           name="state" 
-                                           th:value="${shippingInfo.state}" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           required>
-                                </div>
-                                <div>
-                                    <label for="zipCode" class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
-                                    <input type="text" 
-                                           id="zipCode" 
-                                           name="zipCode" 
-                                           th:value="${shippingInfo.zipCode}" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           required>
-                                </div>
-                            </div>
+
                         </form>
                     </div>
 
@@ -171,30 +133,22 @@
                         
                         <div class="space-y-4 mb-6">
                             <div th:each="item : ${cartItems}" class="flex items-center space-x-3 py-3 border-b border-gray-100 last:border-b-0">
-                                <img th:src="${item.product.image != null ? item.product.image : '/images/default-product.jpg'}" 
-                                     th:alt="${item.product.name}" 
+                                <img th:src="${item.produce.imgUrl != null ? item.produce.imgUrl : '/images/default-produce.jpg'}"
+                                     th:alt="${item.produce.name}"
                                      class="w-12 h-12 object-cover rounded">
                                 <div class="flex-1">
-                                    <h4 class="text-sm font-medium text-gray-900" th:text="${item.product.name}">Product Name</h4>
+                                    <h4 class="text-sm font-medium text-gray-900" th:text="${item.produce.name}">Product Name</h4>
                                     <p class="text-xs text-gray-500" th:text="|Qty: ${item.quantity}|">Qty: 1</p>
                                 </div>
                                 <div class="text-sm font-medium text-gray-900" 
-                                     th:text="|$${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}|">$0.00</div>
+                                     th:text="|$${#numbers.formatDecimal(item.produce.price, 1, 2)}|">$0.00</div>
                             </div>
                         </div>
                         
                         <div class="space-y-3 border-t pt-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Subtotal</span>
-                                <span th:text="|$${#numbers.formatDecimal(subtotal ?: 0, 1, 2)}|">$0.00</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Shipping</span>
-                                <span th:text="|$${#numbers.formatDecimal(shipping ?: 0, 1, 2)}|">$0.00</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Tax</span>
-                                <span th:text="|$${#numbers.formatDecimal(tax ?: 0, 1, 2)}|">$0.00</span>
+                            <div class="flex justify-between text-sm" th:each="item : ${cartItems}">
+                                <span class="text-gray-600" th:text="${item.produce.name}"></span>
+                                <span th:text="|$${#numbers.formatDecimal(item.quantity * item.produce.price, 1, 2)}|">$0.00</span>
                             </div>
                             <div class="border-t pt-3">
                                 <div class="flex justify-between text-lg font-semibold">
