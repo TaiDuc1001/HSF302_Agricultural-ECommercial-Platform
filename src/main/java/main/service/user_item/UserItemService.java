@@ -10,7 +10,7 @@ public interface UserItemService {
     public abstract List<UserItemDTO> toDTOs(List<UserItem> userItems);
     public abstract List<UserItem> findActiveUserItemsByUserId(Long userId);
     public abstract UserItemDTO toDTO(UserItem userItem);
-    public abstract List<UserItem> disableUserItems(List<Long> userItemId);
+    public abstract List<UserItemDTO> disableUserItems(Long userId);
     public abstract UserItemDTO disableUserItem(Long userItemId);
     public abstract UserItem updateUserItem (Long userItemId, UserItemDTO userItemDTO);
     public abstract UserItemDTO updateUserItemQuantity (Long userItemId, UserItemDTO userItemDTO);

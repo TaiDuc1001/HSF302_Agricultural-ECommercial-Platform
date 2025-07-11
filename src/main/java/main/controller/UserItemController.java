@@ -35,11 +35,8 @@ public class UserItemController {
     }
 
     @DeleteMapping("/user/{userId}")
-    public List<UserItem> disableUserItems(@PathVariable Long userId) {
-        List<Long> userItemIds = userItemService.findActiveUserItemsByUserId(userId).stream()
-                .map(UserItem::getId)
-                .toList();
-        return userItemService.disableUserItems(userItemIds);
+    public List<UserItemDTO> disableUserItems(@PathVariable Long userId) {
+        return userItemService.disableUserItems(userId);
     }
 
     @DeleteMapping("/{id}")
