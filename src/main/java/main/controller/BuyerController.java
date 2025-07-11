@@ -1,6 +1,9 @@
 package main.controller;
 
+import main.dto.OrderDTO;
 import main.dto.UserDTO;
+import main.pojo.Order;
+import main.service.order.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,9 +12,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/buyer")
 public class BuyerController {
+
+    private final OrderService orderService;
+
+    public BuyerController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
@@ -42,7 +53,9 @@ public class BuyerController {
         if (user == null || !"BUYER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
-
+        List<Order> orders = orderService.getOrdersByUserId(user.getId());
+        model.addAttribute("orders", orders);
+        model.addAttribute("address", user.getAddress());
         return "buyer/orders";
     }
 

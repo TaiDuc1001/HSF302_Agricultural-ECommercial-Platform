@@ -33,37 +33,41 @@
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-800" th:text="|Order ${order.id}|">Order #001</h3>
                                 <p class="text-sm text-gray-600" th:text="|Placed on ${#temporals.format(order.orderDate, 'MMM dd, yyyy')}|">Placed on Jan 15, 2024</p>
-                                <p class="text-sm text-gray-600" th:text="|Seller: ${order.sellerName}|">Seller: Green Farm</p>
+                                <p class="text-sm text-gray-600" th:text="|Seller: ${order.user.name}|">Seller: Green Farm</p>
                             </div>
                             <div class="text-right">
-                                <span class="px-3 py-1 rounded-full text-sm font-medium" 
-                                      th:classappend="${order.status == 'delivered'} ? 'bg-green-100 text-green-800' : 
-                                                     ${order.status == 'shipped'} ? 'bg-blue-100 text-blue-800' : 
-                                                     ${order.status == 'confirmed'} ? 'bg-yellow-100 text-yellow-800' :
-                                                     ${order.status == 'pending'} ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'"
+                                <span class="px-3 py-1 rounded-full text-sm font-medium"
+                                      th:classappend="${order.status == 'delivered' ? 'bg-green-100 text-green-800' :
+                                                     (order.status == 'shipped' ? 'bg-blue-100 text-blue-800' :
+                                                     (order.status == 'confirmed' ? 'bg-yellow-100 text-yellow-800' :
+                                                     (order.status == 'pending' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800')))}"
                                       th:text="${#strings.capitalize(order.status)}">
                                     Delivered
                                 </span>
-                                <p class="text-lg font-bold text-gray-800 mt-1" th:text="|$${#numbers.formatDecimal(order.totalAmount, 1, 2)}|">$45.99</p>
+                                <p class="text-lg font-bold text-gray-800 mt-1" th:text="|$${#numbers.formatDecimal(order.finalAmount, 1, 2)}|">$45.99</p>
                             </div>
                         </div>
 
                         <div class="space-y-2 mb-4">
-                            <div th:each="item : ${order.orderItems}" class="flex items-center space-x-3 p-3 bg-gray-50 rounded">
-                                <img th:src="${item.product.imageUrl}" alt="Product" class="w-12 h-12 object-cover rounded" />
+                            <div th:each="item : ${order.orderDetails}" class="flex items-center space-x-3 p-3 bg-gray-50 rounded">
+                                <img th:src="${item.produce.imgUrl}" alt="Produce" class="w-12 h-12 object-cover rounded" />
                                 <div class="flex-1">
-                                    <h4 class="font-medium text-gray-800" th:text="${item.product.name}">Product Name</h4>
-                                    <p class="text-sm text-gray-600" th:text="|Quantity: ${item.quantity} × $${#numbers.formatDecimal(item.price, 1, 2)}|">Quantity: 2 × $5.99</p>
+                                    <h4 class="font-medium text-gray-800" th:text="${item.produce.name}">Product Name</h4>
+                                    <p class="text-sm text-gray-600" th:text="|Quantity: ${item.quantity} × $${#numbers.formatDecimal(item.unitPrice, 1, 2)}|">Quantity: 2 × $5.99</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="font-semibold text-gray-800" th:text="|$${#numbers.formatDecimal(item.quantity * item.price, 1, 2)}|">$11.98</p>
+                                    <p class="font-semibold text-gray-800" th:text="|$${#numbers.formatDecimal(item.quantity * item.unitPrice, 1, 2)}|">$11.98</p>
                                 </div>
+                            </div>
+                            <div th:if="${order.discountCode != null}" class="flex justify-between items-center mb-2">
+                                <p class="text-sm font-medium text-gray-600" th:text="|Discount Code: ${order.discountCode.code}|"></p>
+                                <p class="text-sm font-medium text-gray-600 text-right" th:text="|-$${order.discountAmount}|"></p>
                             </div>
                         </div>
 
                         <div class="border-t pt-4 mt-4">
                             <h4 class="font-semibold text-gray-700 mb-2">Shipping Address</h4>
-                            <p class="text-gray-600" th:text="${order.shippingAddress}">123 Main St, City, State 12345</p>
+                            <p class="text-gray-600" th:text="${address}">123 Main St, City, State 12345</p>
                         </div>
 
                         <div class="flex justify-end space-x-3 mt-4">
