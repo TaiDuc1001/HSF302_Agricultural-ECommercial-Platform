@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -96,7 +97,12 @@ public class BuyerController {
         if (user == null || !"BUYER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
-        model.addAttribute("cartItems", userItemService.findActiveUserItemsByUserId(user.getId()));
+        List<UserItem> userItems = userItemService.findActiveUserItemsByUserId(user.getId());
+        BigDecimal totalPrice = userItems.stream()
+                .map(item -> item.getProduce().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        model.addAttribute("cartItems", userItems);
+        model.addAttribute("total", totalPrice);
         return "buyer/cart";
     }
 
