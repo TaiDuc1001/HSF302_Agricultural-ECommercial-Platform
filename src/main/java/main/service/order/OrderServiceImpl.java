@@ -63,8 +63,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderById(Long id) {
-        return toDTO(orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id)));
+    public Order getOrderById(Long id) {
+        return (orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id)));
     }
 
     @Override

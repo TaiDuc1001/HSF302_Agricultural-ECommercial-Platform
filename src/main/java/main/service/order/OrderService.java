@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OrderService {
     public abstract OrderDTO createOrder(OrderDTO orderDTO);
-    public abstract OrderDTO getOrderById(Long id);
+    public abstract Order getOrderById(Long id);
     public abstract List<OrderDTO> getAllOrders();
     public abstract List<Order> getOrdersByUserId(Long userId);
     public abstract OrderDTO updateOrder(Long id, OrderDTO orderDTO);

@@ -30,7 +30,6 @@ public class Produce {
     @Transient
     Double averageRating;
 
-
     @Column(name = "preorder_startdate")
     LocalDate preOrderStartDate;
 
