@@ -33,18 +33,18 @@
                         <div class="border-t pt-6">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Items in this Order</h3>
                             <div th:each="item : ${order.orderDetails}" class="flex items-center space-x-4 py-4 border-b last:border-b-0">
-                                <img th:src="${item.imgUrl != null ? item.imgUrl : '/images/default-produce.jpg'}" alt="Produce" class="w-16 h-16 object-cover rounded-lg" />
+                                <img th:src="${item.produce.imgUrl != null ? item.produce.imgUrl : '/images/default-produce.jpg'}" alt="Produce" class="w-16 h-16 object-cover rounded-lg" />
                                 <div class="flex-1">
-                                    <h4 class="font-medium text-gray-800" th:text="${item.name}">Product Name</h4>
-                                    <p class="text-sm text-gray-500" th:text="|by ${item.sellerName}|">by Seller</p>
+                                    <h4 class="font-medium text-gray-800" th:text="${item.produce.name}">Produce Name</h4>
+                                    <p class="text-sm text-gray-500" th:text="|by ${item.produce.user.name}|">by Seller</p>
                                     <p class="text-sm text-gray-500" th:text="|Quantity: ${item.quantity}|">Quantity: 1</p>
                                 </div>
                                 <div class="text-right">
-                                    <span class="text-lg font-semibold text-green-600" th:text="|$${#numbers.formatDecimal(item.quantity * item.price, 1, 2)}|">$0.00</span>
+                                    <span class="text-lg font-semibold text-green-600" th:text="|$${#numbers.formatDecimal(item.quantity * item.unitPrice, 1, 2)}|">$0.00</span>
                                 </div>
                             </div>
                             <div th:if="${order.discountCode != null}" class="flex justify-between items-center mt-4">
-                                <p class="text-sm font-medium text-gray-600" th:text="|Discount Code: ${order.discountCode}|">Discount Code: SAVE10</p>
+                                <p class="text-sm font-medium text-gray-600" th:text="|Discount Code: ${order.discountCode.code}|">Discount Code: SAVE10</p>
                                 <p class="text-sm font-medium text-gray-600 text-right" th:text="|-$${order.discountAmount}|">-$5.00</p>
                             </div>
                         </div>
@@ -64,9 +64,9 @@
                     <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
                         <div class="space-y-3 mb-4">
-                            <div class="flex justify-between">
-                                <span>Subtotal</span>
-                                <span th:text="|$${#numbers.formatDecimal(order.subtotal, 1, 2)}|">$0.00</span>
+                            <div class="flex justify-between" th:each="item : ${order.orderDetails}">
+                                <span th:text="|${item.produce.name} x ${item.quantity}|">Subtotal</span>
+                                <span th:text="|$${#numbers.formatDecimal(item.unitPrice * item.quantity, 1, 2)}|">$0.00</span>
                             </div>
                             <div th:if="${order.discountAmount != null && order.discountAmount > 0}" class="flex justify-between">
                                 <span>Discount</span>
