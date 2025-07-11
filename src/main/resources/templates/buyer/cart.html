@@ -82,17 +82,9 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
                         
                         <div class="space-y-3 mb-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Subtotal</span>
-                                <span th:text="|$${#numbers.formatDecimal(subtotal ?: 0, 1, 2)}|">$0.00</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Tax</span>
-                                <span th:text="|$${#numbers.formatDecimal(tax ?: 0, 1, 2)}|">$0.00</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Shipping</span>
-                                <span th:text="|$${#numbers.formatDecimal(shipping ?: 0, 1, 2)}|">$0.00</span>
+                            <div class="flex justify-between text-sm" th:each="item : ${cartItems}">
+                                <span class="text-gray-600" th:text="${item.produce.name}"></span>
+                                <span th:text="|$${#numbers.formatDecimal(item.quantity * item.produce.price, 1, 2)}|">$0.00</span>
                             </div>
                             <div class="border-t pt-3">
                                 <div class="flex justify-between text-lg font-semibold">
