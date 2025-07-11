@@ -37,10 +37,10 @@ public class UserItemServiceImpl implements UserItemService {
     }
 
     @Override
-    public List<UserItem> disableUserItems(List<Long> userItemId) {
-        return userItemId.stream()
-                .map(this::disableUserItemHelper)
-                .toList();
+    public List<UserItemDTO> disableUserItems(Long userId) {
+        return toDTOs(findActiveUserItemsByUserId(userId).stream()
+                .map(userItem -> disableUserItemHelper(userItem.getId()))
+                .toList());
     }
 
     @Override

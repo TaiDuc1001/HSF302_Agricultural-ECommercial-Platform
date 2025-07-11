@@ -1,39 +1,38 @@
 package main.controller;
 
+import lombok.RequiredArgsConstructor;
 import main.dto.OrderDTO;
 import main.dto.ProduceDTO;
 import main.dto.UserDTO;
+import main.enumerators.OrderStatus;
 import main.pojo.*;
 import main.service.order.OrderService;
+import main.service.order_item.OrderDetailService;
 import main.service.produce.ProduceService;
+import main.service.user.UserService;
 import main.service.user_item.UserItemService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 @Controller
 @RequestMapping("/buyer")
+@RequiredArgsConstructor
 public class BuyerController {
 
     private final OrderService orderService;
     private final ProduceService produceService;
     private final UserItemService userItemService;
+    private final OrderDetailService orderDetailService;
 
-    public BuyerController(OrderService orderService, ProduceService produceService, UserItemService userItemService) {
-        this.orderService = orderService;
-        this.produceService = produceService;
-        this.userItemService = userItemService;
-    }
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
@@ -137,4 +136,42 @@ public class BuyerController {
         return "buyer/order-detail";
     }
 
+    @PostMapping("/checkout/process")
+    public String processCheckout(HttpSession session, Model model) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null || !"BUYER".equals(user.getRole().toString())) {
+            return "redirect:/auth/login";
+        }
+
+        List<UserItem> userItems = userItemService.findActiveUserItemsByUserId(user.getId());
+        if (userItems.isEmpty()) {
+            model.addAttribute("error", "Your cart is empty.");
+            return "buyer/cart";
+        }
+
+        BigDecimal totalPrice = userItems.stream()
+                .map(item -> item.getProduce().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        boolean isPreorder = userItems.stream()
+                .anyMatch(item -> item.getProduce().getPreOrderStartDate().isAfter(LocalDate.now()) &&
+                                  item.getProduce().getPreOrderEndDate().isBefore(LocalDate.now()) );
+
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setUserId(user.getId());
+        orderDTO.setTotalAmount(totalPrice);
+        orderDTO.setPreOrder(isPreorder);
+        orderDTO.setDiscountCode("PORN30");
+
+        OrderDTO savedOrder = orderService.createOrder(orderDTO);
+
+        for (UserItem item : userItems) {
+            orderDetailService.convertToOrderDetail(item,savedOrder.getId());
+        }
+
+        userItemService.disableUserItems(user.getId());
+
+        model.addAttribute("order", savedOrder);
+        return "redirect:/buyer/home";
+    }
 }
