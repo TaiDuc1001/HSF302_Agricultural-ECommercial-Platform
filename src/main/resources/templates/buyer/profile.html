@@ -7,210 +7,146 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="min-h-screen bg-gray-50 py-8">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="flex items-center justify-between mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
-                <a href="/buyer/home" class="text-green-600 hover:text-green-700 font-medium">
-                    ← Back to Dashboard
-                </a>
-            </div>
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+            <a href="/buyer/home" class="text-green-600 hover:text-green-700 font-medium">
+                ← Back to Dashboard
+            </a>
+        </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-8">
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <h2 class="text-xl font-semibold text-gray-900 mb-6">Personal Information</h2>
-                        
-                        <form th:action="@{/buyer/profile/update}" method="post" class="space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                    <input type="text" 
-                                           id="firstName" 
-                                           name="firstName" 
-                                           th:value="${user.firstName}" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           required>
-                                </div>
-                                <div>
-                                    <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                    <input type="text" 
-                                           id="lastName" 
-                                           name="lastName" 
-                                           th:value="${user.lastName}" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                           required>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                <input type="email" 
-                                       id="email" 
-                                       name="email" 
-                                       th:value="${user.email}" 
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                       required>
-                            </div>
-                            
-                            <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                                <input type="tel" 
-                                       id="phone" 
-                                       name="phone" 
-                                       th:value="${user.phone}" 
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            </div>
-                            
-                            <div class="flex justify-end">
-                                <button type="submit" 
-                                        class="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
-                                    Update Profile
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Personal Information</h2>
 
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <h2 class="text-xl font-semibold text-gray-900 mb-6">Change Password</h2>
-                        
-                        <form th:action="@{/buyer/profile/change-password}" method="post" class="space-y-4">
+                    <form th:action="@{/buyer/profile/update}" method="post" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                                <input type="password" 
-                                       id="currentPassword" 
-                                       name="currentPassword" 
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input type="text"
+                                       id="name"
+                                       name="name"
+                                       th:value="${user.name}"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                        required>
                             </div>
-                            
-                            <div>
-                                <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                                <input type="password" 
-                                       id="newPassword" 
-                                       name="newPassword" 
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                       required>
-                            </div>
-                            
-                            <div>
-                                <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                                <input type="password" 
-                                       id="confirmPassword" 
-                                       name="confirmPassword" 
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                       required>
-                            </div>
-                            
-                            <div class="flex justify-end">
-                                <button type="submit" 
-                                        class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                                    Change Password
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
 
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xl font-semibold text-gray-900">Shipping Addresses</h2>
-                            <button type="button" 
-                                    onclick="showAddAddressForm()" 
-                                    class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
-                                Add Address
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   th:value="${user.email}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   required>
+                        </div>
+
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input type="tel"
+                                   id="phone"
+                                   name="phone"
+                                   th:value="${user.phone}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                            <input type="text"
+                                   id="address"
+                                   name="address"
+                                   th:value="${user.address}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                    class="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
+                                Update Profile
                             </button>
                         </div>
-                        
-                        <div th:if="${addresses != null and not #lists.isEmpty(addresses)}" class="space-y-4">
-                            <div th:each="address : ${addresses}" class="border border-gray-200 rounded-lg p-4">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex-1">
-                                        <h3 class="font-medium text-gray-900" th:text="${address.label}">Home</h3>
-                                        <p class="text-sm text-gray-600 mt-1">
-                                            <span th:text="${address.street}">123 Main St</span><br>
-                                            <span th:text="|${address.city}, ${address.state} ${address.zipCode}|">City, State 12345</span><br>
-                                            <span th:text="${address.country}">Country</span>
-                                        </p>
-                                        <div th:if="${address.isDefault}" class="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full mt-2">
-                                            Default
-                                        </div>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <button type="button" 
-                                                th:onclick="|editAddress(${address.id})|"
-                                                class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                            Edit
-                                        </button>
-                                        <button type="button" 
-                                                th:onclick="|deleteAddress(${address.id})|"
-                                                class="text-red-600 hover:text-red-700 text-sm font-medium">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div th:if="${addresses == null or #lists.isEmpty(addresses)}" class="text-center py-8">
-                            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            <p class="text-gray-500">No shipping addresses added yet</p>
-                        </div>
-                    </div>
+                    </form>
                 </div>
 
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
-                        <div class="text-center mb-6">
-                            <img th:src="@{https://ui-avatars.com/api/?name={name}&background=34d399&color=fff&size=96(name=${user.firstName + ' ' + user.lastName})}" 
-                                 alt="Profile Picture" 
-                                 class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-green-200">
-                            <h3 class="text-lg font-semibold text-gray-900" th:text="|${user.firstName} ${user.lastName}|">User Name</h3>
-                            <p class="text-sm text-gray-500" th:text="${user.email}">user@example.com</p>
-                            <div class="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full mt-2">
-                                Verified Account
-                            </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Change Password</h2>
+
+                    <form th:action="@{/buyer/profile/change-password}" method="post" class="space-y-4">
+                        <div>
+                            <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                            <input type="password"
+                                   id="currentPassword"
+                                   name="currentPassword"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   required>
                         </div>
-                        
-                        <div class="space-y-3 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Member since</span>
-                                <span th:text="${#temporals.format(user.createdAt, 'MMM yyyy')}">Jan 2024</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Total orders</span>
-                                <span th:text="${totalOrders ?: 0}">0</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Pending reviews</span>
-                                <span th:text="${pendingReviews ?: 0}">0</span>
-                            </div>
+
+                        <div>
+                            <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                            <input type="password"
+                                   id="newPassword"
+                                   name="newPassword"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   required>
+                        </div>
+
+                        <div>
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                            <input type="password"
+                                   id="confirmPassword"
+                                   name="confirmPassword"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   required>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                    class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                Change Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                    <div class="text-center mb-6">
+                        <img th:src="@{https://ui-avatars.com/api/?name={name}&background=34d399&color=fff&size=96(name=${user.name})}"
+                             alt="Profile Picture"
+                             class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-green-200">
+                        <h3 class="text-lg font-semibold text-gray-900" th:text="${user.name}">User Name</h3>
+                        <p class="text-sm text-gray-500" th:text="${user.email}">user@example.com</p>
+                        <div class="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full mt-2">
+                            Verified Account
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        function showAddAddressForm() {
-            // Implementation for showing add address form modal
-            alert('Add address functionality to be implemented');
-        }
+<script>
+    function showAddAddressForm() {
+        // Implementation for showing add address form modal
+        alert('Add address functionality to be implemented');
+    }
 
-        function editAddress(addressId) {
-            // Implementation for editing address
-            console.log('Edit address:', addressId);
-        }
+    function editAddress(addressId) {
+        // Implementation for editing address
+        console.log('Edit address:', addressId);
+    }
 
-        function deleteAddress(addressId) {
-            if (confirm('Are you sure you want to delete this address?')) {
-                // Implementation for deleting address
-                console.log('Delete address:', addressId);
-            }
+    function deleteAddress(addressId) {
+        if (confirm('Are you sure you want to delete this address?')) {
+            // Implementation for deleting address
+            console.log('Delete address:', addressId);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
