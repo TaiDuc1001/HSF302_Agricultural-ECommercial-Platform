@@ -24,40 +24,34 @@ public class UserItemServiceImpl implements UserItemService {
 
 
     @Override
-    public List<UserItemDTO> findUserItemsByUserId(Long userId) {
-        return toDTOs(userItemRepository.findUserItemsByUserId(userId));
+    public List<UserItem> findUserItemsByUserId(Long userId) {
+        return userItemRepository.findUserItemsByUserId(userId);
     }
 
     @Override
-    public List<UserItemDTO> findActiveUserItemsByUserId(Long userId) {
+    public List<UserItem> findActiveUserItemsByUserId(Long userId) {
         List<UserItem> userItems = userItemRepository.findUserItemsByUserId(userId).stream()
                 .filter(UserItem::getIsActive)
                 .toList();
-        return toDTOs(userItems);
+        return userItems;
     }
 
     @Override
-    public UserItemDTO createUserItem(UserItemDTO userItemDTO) {
-        User user = userRepository.findById(userItemDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userItemDTO.getUserId()));
-
-        Produce produce = produceRepository.findById(userItemDTO.getProduceId()).orElseThrow(() -> new EntityNotFoundException("Produce not found with id: " + userItemDTO.getProduceId()));
-
-        UserItem userItem = UserItem.builder()
-                .id(userItemDTO.getUserId())
-                .user(user)
-                .produce(produce)
-                .quantity(userItemDTO.getQuantity())
-                .isActive(true)
-                .build();
-        return toDTO(userItemRepository.save(userItem));
-    }
-
-
-    @Override
-    public List<UserItemDTO> disableUserItems(List<Long> userItemId) {
+    public List<UserItem> disableUserItems(List<Long> userItemId) {
         return userItemId.stream()
-                .map(this::disableUserItem)
+                .map(this::disableUserItemHelper)
                 .toList();
+    }
+
+    @Override
+    public UserItemDTO disableUserItem(Long userItemId) {
+        return toDTO(disableUserItemHelper(userItemId));
+    }
+
+    private UserItem disableUserItemHelper(Long userItemId) {
+        UserItem userItem = findUserItemById(userItemId);
+        userItem.setIsActive(false);
+        return userItemRepository.save(userItem);
     }
 
     @Override
@@ -75,14 +69,8 @@ public class UserItemServiceImpl implements UserItemService {
                 .orElseThrow(() -> new EntityNotFoundException("UserItem not found with id: " + userItemId));
     }
 
-    private UserItemDTO disableUserItem(Long userItemId) {
-        UserItem userItem = findUserItemById(userItemId);
-        userItem.setIsActive(false);
-        return toDTO(userItemRepository.save(userItem));
-    }
-
     @Override
-    public UserItemDTO updateUserItem(Long userItemId, UserItemDTO userItemDTO) {
+    public UserItem updateUserItem(Long userItemId, UserItemDTO userItemDTO) {
         User user = userRepository.findById(userItemDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userItemDTO.getUserId()));
 
         Produce produce = produceRepository.findById(userItemDTO.getProduceId()).orElseThrow(() -> new EntityNotFoundException("Produce not found with id: " + userItemDTO.getProduceId()));
@@ -94,7 +82,7 @@ public class UserItemServiceImpl implements UserItemService {
                 .isActive(userItemDTO.getIsActive())
                 .build();
 
-        return toDTO(userItemRepository.save(userItem));
+        return userItemRepository.save(userItem);
     }
 
     @Override
@@ -103,5 +91,34 @@ public class UserItemServiceImpl implements UserItemService {
                 .quantity(userItemDTO.getQuantity())
                 .build();
         return toDTO(userItemRepository.save(userItem));
+    }
+
+    @Override
+    public UserItemDTO addUserItem(UserItemDTO userItemDTO) {
+        UserItem existingUserItem = checkIfUserItemExists(userItemDTO);
+        if (existingUserItem != null) {
+            existingUserItem.setQuantity(existingUserItem.getQuantity() + userItemDTO.getQuantity());
+            return toDTO(userItemRepository.save(existingUserItem));
+        }
+        return toDTO(createUserItem(userItemDTO));
+    }
+
+    private UserItem createUserItem(UserItemDTO userItemDTO) {
+        User user = userRepository.findById(userItemDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userItemDTO.getUserId()));
+
+        Produce produce = produceRepository.findById(userItemDTO.getProduceId()).orElseThrow(() -> new EntityNotFoundException("Produce not found with id: " + userItemDTO.getProduceId()));
+
+        UserItem userItem = UserItem.builder()
+                .id(null)
+                .user(user)
+                .produce(produce)
+                .quantity(userItemDTO.getQuantity())
+                .isActive(true)
+                .build();
+        return userItemRepository.save(userItem);
+    }
+
+    private UserItem checkIfUserItemExists(UserItemDTO userItemDTO) {
+        return userItemRepository.findByUserIdAndProduceIdAndIsActive(userItemDTO.getUserId(), userItemDTO.getProduceId(), true);
     }
 }

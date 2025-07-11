@@ -27,6 +27,10 @@ public class Produce {
     Boolean isActive;
     String imgUrl;
 
+    @Transient
+    Double averageRating;
+
+
     @Column(name = "preorder_startdate")
     LocalDate preOrderStartDate;
 
