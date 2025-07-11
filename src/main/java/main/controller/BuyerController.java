@@ -112,8 +112,13 @@ public class BuyerController {
         if (user == null || !"BUYER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
-
+        List<UserItem> userItems = userItemService.findActiveUserItemsByUserId(user.getId());
+        BigDecimal totalPrice = userItems.stream()
+                .map(item -> item.getProduce().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         model.addAttribute("user", user);
+        model.addAttribute("cartItems", userItems);
+        model.addAttribute("total", totalPrice);
         return "buyer/checkout";
     }
 }
