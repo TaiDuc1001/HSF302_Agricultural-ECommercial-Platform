@@ -73,8 +73,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersByUserId(Long userId) {
-        return toDTOs(orderRepository.findByUserId(userId));
+    public List<Order> getOrdersByUserId(Long userId) {
+        return orderRepository.findByUserId(userId);
     }
 
     @Override

@@ -2,13 +2,15 @@ package main.controller;
 
 import lombok.RequiredArgsConstructor;
 import main.dto.OrderDTO;
+import main.pojo.Order;
 import main.service.order.OrderService;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/v1/orders")
+@Controller
+@RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
@@ -24,7 +26,7 @@ public class OrderController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<OrderDTO> getOrdersByUserId(@PathVariable Long userId) {
+    public List<Order> getOrdersByUserId(@PathVariable Long userId) {
         return orderService.getOrdersByUserId(userId);
     }
 
