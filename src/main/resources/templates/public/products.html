@@ -105,11 +105,71 @@
                 </div>
                 
                 <div id="products-container" class="mb-8">
+                    <!-- Grid view (default) -->
+                    <div id="grid-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div th:each="produce : ${produce}" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                            <img th:src="${produce.imgUrl ?: '/images/default-produce.jpg'}" th:alt="${produce.name}" class="w-full h-48 object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBWMTQwSDgwVjYwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNNjAgODBIMTQwVjEyMEg2MFY4MFoiIGZpbGw9IiM2QjcyODAiLz4KPHN2Zz4K'" />
+                            <div class="p-4">
+                                <h3 class="font-semibold text-gray-800 mb-2" th:text="${produce.name}">Product Name</h3>
+                                <p class="text-sm text-gray-600 mb-2" th:text="'by ' + ${produce.user?.name ?: 'Unknown Seller'}">by Seller</p>
+                                <p class="text-sm text-gray-500 mb-2" th:text="${produce.description}">Description</p>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-lg font-bold text-green-600" th:text="'$' + ${produce.price}">$0.00</span>
+                                    <div class="flex items-center">
+                                        <span class="text-yellow-400">★</span>
+                                        <span class="text-sm text-gray-600 ml-1" th:text="${produce.averageRating != null ? #numbers.formatDecimal(produce.averageRating, 1, 1) : '0.0'}">0.0</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-500" th:text="'Quantity: ' + ${produce.quantity ?: 0}">Quantity: 0</span>
+                                    <span th:class="'text-xs px-2 py-1 rounded ' + (${produce.isActive} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')"
+                                          th:text="${produce.isActive ? 'Available' : 'Unavailable'}">Available</span>
+                                </div>
+                                <a th:href="@{/public/products/{id}(id=${produce.id})}" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-center block transition-colors">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- List view (hidden by default) -->
+                    <div id="list-view-container" class="space-y-4 hidden">
+                        <div th:each="produce : ${produce}" class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4 hover:shadow-lg transition-shadow">
+                            <img th:src="${produce.imgUrl ?: '/images/default-produce.jpg'}" th:alt="${produce.name}" class="w-20 h-20 object-cover rounded" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBWMTQwSDgwVjYwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNNjAgODBIMTQwVjEyMEg2MFY4MFoiIGZpbGw9IiM2QjcyODAiLz4KPHN2Zz4K'" />
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-800 mb-1" th:text="${produce.name}">Product Name</h3>
+                                <p class="text-sm text-gray-600 mb-1" th:text="'by ' + ${produce.user?.name ?: 'Unknown Seller'}">by Seller</p>
+                                <p class="text-sm text-gray-500 mb-2" th:text="${produce.description}">Description</p>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-lg font-bold text-green-600" th:text="'$' + ${produce.price}">$0.00</span>
+                                    <div class="flex items-center">
+                                        <span class="text-yellow-400">★</span>
+                                        <span class="text-sm text-gray-600 ml-1" th:text="${produce.averageRating != null ? #numbers.formatDecimal(produce.averageRating, 1, 1) : '0.0'}">0.0</span>
+                                    </div>
+                                    <span class="text-xs text-gray-500" th:text="'Qty: ' + ${produce.quantity ?: 0}">Qty: 0</span>
+                                    <span th:class="'text-xs px-2 py-1 rounded ' + (${produce.isActive} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')"
+                                          th:text="${produce.isActive ? 'Available' : 'Unavailable'}">Available</span>
+                                </div>
+                            </div>
+                            <a th:href="@{/public/products/{id}(id=${produce.id})}" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- No produces message -->
+                    <div th:if="${#lists.isEmpty(produce)}" class="text-center py-12">
+                        <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v4.01"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No produces available</h3>
+                        <p class="text-gray-500">Check back later for new produces.</p>
+                    </div>
                 </div>
-                
+
                 <div id="pagination-container" class="flex justify-center">
                 </div>
-                
+
                 <div class="text-center mt-8">
                     <div class="flex justify-center gap-6">
                         <a href="/sellers" class="text-green-700 underline hover:text-green-900">View Sellers</a>
@@ -120,306 +180,37 @@
         </main>
     </div>
 
-    <script src="/data/products.js"></script>
+    <script th:inline="javascript">
+        // Make produce data available to JavaScript
+        window.producesData = /*[[${produce}]]*/ [];
+
+        // Log to verify data is loaded
+        console.log("Produces loaded:", window.producesData);
+    </script>
     <script>
-        const CATEGORIES = ['Produce', 'Seeds', 'Fertilizer', 'Dairy', 'Honey', 'Poultry'];
-        const SUGGESTIONS = [
-            'Organic Tomatoes', 'Fresh Carrots', 'Premium Fertilizer', 'Organic Seeds',
-            'Seasonal Fruits', 'Natural Honey', 'Farm Eggs', 'Organic Rice',
-            'Fresh Milk', 'Sweet Potatoes', 'Organic Corn', 'Fresh Spinach',
-            'Farm Chicken', 'Organic Wheat'
-        ];
-        
-        const PRODUCTS_PER_PAGE = 9;
-        
-        let currentPage = 1;
-        let currentViewMode = 'grid';
-        let filteredProducts = [];
-        let searchTerm = '';
-        let selectedCategories = [];
-        let organicFilter = 'all';
-        let priceRange = [0, 1000];
-        let sortBy = 'name';
-
-        function initializeFilters() {
-            const categoryContainer = document.getElementById('category-filters');
-            categoryContainer.innerHTML = CATEGORIES.map(category => `
-                <label class="flex items-center">
-                    <input type="checkbox" value="${category}" onchange="handleCategoryChange('${category}')" class="mr-2" />
-                    <span class="text-gray-600">${category}</span>
-                </label>
-            `).join('');
-            
-            document.getElementById('min-price').value = priceRange[0];
-            document.getElementById('max-price').value = priceRange[1];
-        }
-
-        function handleCategoryChange(category) {
-            const checkbox = event.target;
-            if (checkbox.checked) {
-                selectedCategories.push(category);
-            } else {
-                selectedCategories = selectedCategories.filter(c => c !== category);
-            }
-            applyFilters();
-        }
-
-        function handleSearchInput() {
-            searchTerm = document.getElementById('search-input').value;
-            updateSearchDropdown();
-            applyFilters();
-        }
-
-        function updateSearchDropdown() {
-            const dropdown = document.getElementById('search-dropdown');
-            
-            if (!searchTerm) {
-                dropdown.classList.add('hidden');
-                return;
-            }
-            
-            const suggestions = SUGGESTIONS.filter(s => 
-                s.toLowerCase().includes(searchTerm.toLowerCase())
-            ).slice(0, 5);
-            
-            if (suggestions.length === 0) {
-                dropdown.classList.add('hidden');
-                return;
-            }
-            
-            dropdown.innerHTML = suggestions.map(suggestion => `
-                <div onclick="selectSuggestion('${suggestion}')" class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    ${suggestion}
-                </div>
-            `).join('');
-            
-            dropdown.classList.remove('hidden');
-        }
-
-        function selectSuggestion(suggestion) {
-            document.getElementById('search-input').value = suggestion;
-            searchTerm = suggestion;
-            document.getElementById('search-dropdown').classList.add('hidden');
-            applyFilters();
-        }
-
-        function applyFilters() {
-            currentPage = 1;
-            
-            const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
-            const maxPrice = parseFloat(document.getElementById('max-price').value) || 1000;
-            priceRange = [minPrice, maxPrice];
-            
-            const organicRadio = document.querySelector('input[name="organic"]:checked');
-            organicFilter = organicRadio ? organicRadio.value : 'all';
-            
-            sortBy = document.getElementById('sort-select').value;
-            
-            filterProducts();
-            renderProducts();
-            renderPagination();
-            updateResultsCount();
-        }
-
-        function clearFilters() {
-            searchTerm = '';
-            selectedCategories = [];
-            organicFilter = 'all';
-            priceRange = [0, 1000];
-            sortBy = 'name';
-            currentPage = 1;
-            
-            document.getElementById('search-input').value = '';
-            document.getElementById('min-price').value = 0;
-            document.getElementById('max-price').value = 1000;
-            document.querySelector('input[name="organic"][value="all"]').checked = true;
-            document.getElementById('sort-select').value = 'name';
-            
-            document.querySelectorAll('#category-filters input[type="checkbox"]').forEach(cb => {
-                cb.checked = false;
-            });
-            
-            applyFilters();
-        }
-
-        function filterProducts() {
-            if (!window.productsData) return;
-            
-            filteredProducts = window.productsData.filter(product => {
-                const matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm.toLowerCase());
-                const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-                const matchesOrganic = organicFilter === 'all' || 
-                    (organicFilter === 'organic' && product.isOrganic) ||
-                    (organicFilter === 'non-organic' && !product.isOrganic);
-                const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-                
-                return matchesSearch && matchesCategory && matchesOrganic && matchesPrice;
-            });
-            
-            filteredProducts.sort((a, b) => {
-                switch (sortBy) {
-                    case 'price-low':
-                        return a.price - b.price;
-                    case 'price-high':
-                        return b.price - a.price;
-                    case 'rating':
-                        return (b.rating || 0) - (a.rating || 0);
-                    case 'popularity':
-                        return (b.solds || 0) - (a.solds || 0);
-                    default:
-                        return a.name.localeCompare(b.name);
-                }
-            });
-        }
-
-        function renderProducts() {
-            const container = document.getElementById('products-container');
-            const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-            const endIndex = startIndex + PRODUCTS_PER_PAGE;
-            const productsToShow = filteredProducts.slice(startIndex, endIndex);
-            
-            if (productsToShow.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12">
-                        <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v4.01"></path>
-                        </svg>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
-                        <p class="text-gray-500">Try adjusting your filters or search terms.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            if (currentViewMode === 'grid') {
-                container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${productsToShow.map(product => `
-                            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                                <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover" />
-                                <div class="p-4">
-                                    <h3 class="font-semibold text-gray-800 mb-2">${product.name}</h3>
-                                    <p class="text-sm text-gray-600 mb-2">by ${product.seller}</p>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-lg font-bold text-green-600">$${product.price.toFixed(2)}</span>
-                                        <div class="flex items-center">
-                                            <span class="text-yellow-400">★</span>
-                                            <span class="text-sm text-gray-600 ml-1">${product.rating || 0}</span>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mb-3">${product.solds || 0} sold</p>
-                                    <a href="/products/${product.id}" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-center block transition-colors">
-                                        View Details
-                                    </a>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <div class="space-y-4">
-                        ${productsToShow.map(product => `
-                            <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4 hover:shadow-lg transition-shadow">
-                                <img src="${product.image}" alt="${product.name}" class="w-20 h-20 object-cover rounded" />
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800 mb-1">${product.name}</h3>
-                                    <p class="text-sm text-gray-600 mb-1">by ${product.seller}</p>
-                                    <div class="flex items-center space-x-4">
-                                        <span class="text-lg font-bold text-green-600">$${product.price.toFixed(2)}</span>
-                                        <div class="flex items-center">
-                                            <span class="text-yellow-400">★</span>
-                                            <span class="text-sm text-gray-600 ml-1">${product.rating || 0}</span>
-                                        </div>
-                                        <span class="text-xs text-gray-500">${product.solds || 0} sold</span>
-                                    </div>
-                                </div>
-                                <a href="/products/${product.id}" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-                                    View Details
-                                </a>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-        }
-
-        function renderPagination() {
-            const container = document.getElementById('pagination-container');
-            const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-            
-            if (totalPages <= 1) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            let paginationHTML = '<div class="flex items-center space-x-2">';
-            
-            paginationHTML += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>`;
-            
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-                    paginationHTML += `<button onclick="goToPage(${i})" class="px-3 py-2 border ${i === currentPage ? 'bg-green-600 text-white border-green-600' : 'border-gray-300 hover:bg-gray-100'} rounded">${i}</button>`;
-                } else if (i === currentPage - 3 || i === currentPage + 3) {
-                    paginationHTML += '<span class="px-3 py-2">...</span>';
-                }
-            }
-            
-            paginationHTML += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>`;
-            
-            paginationHTML += '</div>';
-            
-            container.innerHTML = paginationHTML;
-        }
-
-        function goToPage(page) {
-            const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-            if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                renderProducts();
-                renderPagination();
-            }
-        }
-
         function setViewMode(mode) {
-            currentViewMode = mode;
-            
-            document.getElementById('grid-view').className = mode === 'grid' 
-                ? 'p-2 bg-green-600 text-white rounded-l'
-                : 'p-2 bg-gray-200 text-gray-600 rounded-l';
-            
-            document.getElementById('list-view').className = mode === 'list' 
-                ? 'p-2 bg-green-600 text-white rounded-r'
-                : 'p-2 bg-gray-200 text-gray-600 rounded-r';
-            
-            renderProducts();
-        }
+            const gridContainer = document.getElementById('grid-view-container');
+            const listContainer = document.getElementById('list-view-container');
 
-        function updateResultsCount() {
-            const count = filteredProducts.length;
-            document.getElementById('results-count').textContent = `${count} product${count !== 1 ? 's' : ''} found`;
-        }
+            if (mode === 'grid') {
+                gridContainer.classList.remove('hidden');
+                listContainer.classList.add('hidden');
 
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeFilters();
-            
-            if (window.productsData) {
-                applyFilters();
+                document.getElementById('grid-view').className = 'p-2 bg-green-600 text-white rounded-l';
+                document.getElementById('list-view').className = 'p-2 bg-gray-200 text-gray-600 rounded-r';
+            } else {
+                gridContainer.classList.add('hidden');
+                listContainer.classList.remove('hidden');
+
+                document.getElementById('grid-view').className = 'p-2 bg-gray-200 text-gray-600 rounded-l';
+                document.getElementById('list-view').className = 'p-2 bg-green-600 text-white rounded-r';
             }
-            
-            document.getElementById('search-input').addEventListener('input', handleSearchInput);
-            document.getElementById('sort-select').addEventListener('change', applyFilters);
-            
-            document.querySelectorAll('input[name="organic"]').forEach(radio => {
-                radio.addEventListener('change', applyFilters);
-            });
-            
-            document.getElementById('search-input').addEventListener('focus', updateSearchDropdown);
-            document.getElementById('search-input').addEventListener('blur', () => {
-                setTimeout(() => {
-                    document.getElementById('search-dropdown').classList.add('hidden');
-                }, 150);
-            });
+        }
+
+        // Update results count
+        document.addEventListener('DOMContentLoaded', function() {
+            const produceCount = document.querySelectorAll('#grid-view-container > div').length;
+            document.getElementById('results-count').textContent = `${produceCount} produce${produceCount !== 1 ? 's' : ''} found`;
         });
     </script>
 </body>
