@@ -1,6 +1,8 @@
 package main.controller;
 
+import lombok.RequiredArgsConstructor;
 import main.dto.UserDTO;
+import main.service.produce.ProduceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +13,9 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/public")
+@RequiredArgsConstructor
 public class PublicController {
+    private final ProduceService produceService;
 
     @GetMapping("/home")
     public String home(Model model, HttpSession session) {
@@ -19,7 +23,6 @@ public class PublicController {
         if (user != null) {
             model.addAttribute("user", user);
         }
-        
         return "public/home";
     }
 
@@ -29,6 +32,7 @@ public class PublicController {
         if (user != null) {
             model.addAttribute("user", user);
         }
+        model.addAttribute("produce", produceService.getProduceWithAverageRating());
         return "public/products";
     }
 
