@@ -15,4 +15,5 @@ public class UserDTO {
     String address;
     String phone;
     Role role;
+    Boolean isActive;
 }

@@ -77,4 +77,17 @@ public class UserServiceImpl implements UserService {
         return toDTO(userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id)));
     }
+    @Override
+    public UserDTO updateUserStatus(Long userId, Boolean isActive) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        user.setIsActive(isActive);
+        return toDTO(userRepository.save(user));
+    }
+
+    @Override
+    public List<UserDTO> searchUsers(String searchTerm) {
+        List<User> users = userRepository.findUsersByNameContainingOrEmailContaining(searchTerm, searchTerm);
+        return toDTOs(users);
+    }
 }

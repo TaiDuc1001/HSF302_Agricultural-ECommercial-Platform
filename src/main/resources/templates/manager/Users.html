@@ -94,11 +94,15 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 rounded-full text-xs font-medium"
-                                              th:classappend="${user.role == 'BUYER'} ? 'bg-green-100 text-green-800' : 
-                                                             ${user.role == 'SELLER'} ? 'bg-purple-100 text-purple-800' : 
-                                                             'bg-blue-100 text-blue-800'"
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                                              th:if="${user.role == 'BUYER'}"
                                               th:text="${user.role}">BUYER</span>
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                                              th:if="${user.role == 'SELLER'}"
+                                              th:text="${user.role}">SELLER</span>
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                              th:if="${user.role == 'MANAGER'}"
+                                              th:text="${user.role}">MANAGER</span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.email}">john@example.com</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.phone ?: 'N/A'}">+1234567890</td>
@@ -170,17 +174,17 @@
         function filterUsers() {
             const roleFilter = document.getElementById('role-filter').value;
             const searchTerm = document.getElementById('search-users').value;
-            
+
             let url = '/manager/users';
             const params = new URLSearchParams();
-            
+
             if (roleFilter) params.append('role', roleFilter);
             if (searchTerm) params.append('search', searchTerm);
-            
+
             if (params.toString()) {
                 url += '?' + params.toString();
             }
-            
+
             window.location.href = url;
         }
 

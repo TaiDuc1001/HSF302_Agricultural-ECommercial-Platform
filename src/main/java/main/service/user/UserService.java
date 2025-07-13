@@ -15,4 +15,7 @@ public interface UserService {
     public abstract UserDTO toDTO(User user);
     public abstract List<UserDTO> toDTOs(List<User> users);
     public abstract UserDTO createUser(UserDTO userDTO);
+    public abstract UserDTO updateUserStatus(Long userId, Boolean isActive);
+    public abstract List<UserDTO> searchUsers(String searchTerm);
+
 }
