@@ -42,7 +42,7 @@
                             <span th:text="${name != null ? #strings.substring(name, 0, 2).toUpperCase() : 'US'}">US</span>
                         </div>
                         <span class="text-white text-sm font-medium hidden sm:block" th:text="${name ?: 'User'}">User</span>
-                        <span class="text-green-200 text-xs hidden sm:block" th:text="${cartItems ?: 0}">123</span>
+                        <span class="text-green-200 text-xs hidden sm:block" th:text="${cartItems != null ? #lists.size(cartItems) : 0}">0</span>
                     </div>
                     
                     <!-- Logout Button -->
@@ -53,6 +53,67 @@
             </div>
         </div>
     </header>
+
+    <div class="min-h-screen bg-gray-50 flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg fixed h-full">
+            <div class="p-6">
+                <div class="flex items-center mb-8">
+                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 9 5.16-1 9-3.45 9-9V7l-10-5z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800">Dashboard</h2>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="/buyer/home" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    
+                    <a href="/buyer/orders" class="flex items-center px-4 py-3 text-green-600 bg-green-50 rounded-lg font-medium">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        My Orders
+                    </a>
+                    
+                    <a href="/buyer/cart" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"/>
+                        </svg>
+                        My Cart
+                        <span class="ml-auto bg-green-600 text-white text-xs px-2 py-1 rounded-full" th:text="${cartItems != null ? #lists.size(cartItems) : 0}">0</span>
+                    </a>
+                    
+                    <a href="/buyer/profile" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        Manage Profile
+                    </a>
+                    
+                    <a href="/public/products" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        Go Shopping
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="ml-64 flex-1 p-8">
+            <!-- Page Header -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">Order Details</h1>
+                <p class="text-gray-600">View detailed information about your order</p>
+            </div>
 
     <div class="min-h-screen bg-gray-50 py-8">
         <div class="max-w-6xl mx-auto px-4">
@@ -129,7 +190,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-green-800 text-white mt-12">
@@ -197,8 +258,9 @@
             </div>
         </div>
     </footer>
+</div>
 
-    <script th:inline="javascript">
+<script th:inline="javascript">
         function reorderItems(orderId) {
             if (confirm('Add all items from this order to your cart?')) {
                 fetch('/buyer/orders/' + orderId + '/reorder', {
