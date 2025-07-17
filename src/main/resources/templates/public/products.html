@@ -54,66 +54,115 @@
         </div>
     </header>
 
-    <div th:fragment="public-products" class="flex min-h-screen bg-gray-50">
-        <!-- Sidebar Filter -->
-        <aside class="w-80 bg-white shadow-lg">
+    <div th:fragment="public-products" class="min-h-screen bg-gray-50 flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg fixed h-full">
             <div class="p-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-6">Filters</h2>
-                
-                <div class="mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Categories</h3>
-                    <div id="category-filters" class="space-y-2">
+                <div class="flex items-center mb-8">
+                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 9 5.16-1 9-3.45 9-9V7l-10-5z"/>
+                        </svg>
                     </div>
+                    <h2 class="text-xl font-bold text-gray-800">Products</h2>
                 </div>
                 
-                <div class="mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Organic</h3>
-                    <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="organic" value="all" class="mr-2" checked />
-                            <span class="text-gray-600">All Products</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="organic" value="organic" class="mr-2" />
-                            <span class="text-gray-600">Organic Only</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="organic" value="non-organic" class="mr-2" />
-                            <span class="text-gray-600">Non-Organic Only</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Price Range</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-2">
-                            <input type="number" id="min-price" placeholder="Min" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" />
-                            <span class="text-gray-500">-</span>
-                            <input type="number" id="max-price" placeholder="Max" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" />
-                        </div>
-                        <div class="text-sm text-gray-500">
-                            Price range: $<span id="price-range-display">0 - 1000</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <button onclick="applyFilters()" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-                    Apply Filters
-                </button>
-                
-                <button onclick="clearFilters()" class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 transition-colors mt-2">
-                    Clear Filters
-                </button>
+                <nav class="space-y-2">
+                    <a href="/buyer/home" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    
+                    <a href="/buyer/orders" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        My Orders
+                    </a>
+                    
+                    <a href="/buyer/cart" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"/>
+                        </svg>
+                        My Cart
+                        <span class="ml-auto bg-green-600 text-white text-xs px-2 py-1 rounded-full" th:text="${cartItems != null ? #lists.size(cartItems) : 0}">0</span>
+                    </a>
+                    
+                    <a href="/buyer/profile" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        Manage Profile
+                    </a>
+                    
+                    <a href="/public/products" class="flex items-center px-4 py-3 text-green-600 bg-green-50 rounded-lg font-medium">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        Go Shopping
+                    </a>
+                </nav>
             </div>
-        </aside>
+        </div>
         
-        <main class="flex-1 p-6">
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-6">
             <div class="max-w-6xl mx-auto">
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-gray-900 mb-6">Products</h1>
                     
-                    <!-- Search and Filter Controls in Same Row -->
+                    <!-- Filter Section - Horizontal -->
+                    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end">
+                            <!-- Categories Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                <select id="category-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    <option value="">All Categories</option>
+                                    <option value="vegetables">Vegetables</option>
+                                    <option value="fruits">Fruits</option>
+                                    <option value="grains">Grains</option>
+                                    <option value="dairy">Dairy</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Organic Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                                <select id="organic-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    <option value="">All Products</option>
+                                    <option value="organic">Organic Only</option>
+                                    <option value="non-organic">Non-Organic Only</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Price Range Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="number" id="min-price" placeholder="Min" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    <span class="text-gray-500">-</span>
+                                    <input type="number" id="max-price" placeholder="Max" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                </div>
+                            </div>
+                            
+                            <!-- Filter Actions -->
+                            <div>
+                                <div class="flex space-x-2">
+                                    <button onclick="applyFilters()" class="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                                        Apply
+                                    </button>
+                                    <button onclick="clearFilters()" class="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search and Sort Controls -->
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
                         <!-- Search and Sort Section -->
                         <div class="flex flex-col sm:flex-row sm:items-center gap-4 flex-1">
@@ -331,13 +380,14 @@
 
         function applyFilters() {
             // Get filter values
+            const categoryFilter = document.getElementById('category-filter').value;
+            const organicFilter = document.getElementById('organic-filter').value;
             const minPrice = document.getElementById('min-price').value;
             const maxPrice = document.getElementById('max-price').value;
-            const organicFilter = document.querySelector('input[name="organic"]:checked').value;
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             
             // Apply filters logic here
-            console.log('Applying filters:', { minPrice, maxPrice, organicFilter, searchTerm });
+            console.log('Applying filters:', { categoryFilter, organicFilter, minPrice, maxPrice, searchTerm });
             
             // You can implement actual filtering logic here
             // For now, just update the results count
@@ -346,10 +396,11 @@
 
         function clearFilters() {
             // Clear all filter inputs
+            document.getElementById('category-filter').value = '';
+            document.getElementById('organic-filter').value = '';
             document.getElementById('min-price').value = '';
             document.getElementById('max-price').value = '';
             document.getElementById('search-input').value = '';
-            document.querySelector('input[name="organic"][value="all"]').checked = true;
             
             // Reset any applied filters
             updateResultsCount();
@@ -373,6 +424,23 @@
             document.getElementById('sort-select').addEventListener('change', function() {
                 // Implement sorting functionality here
                 console.log('Sorting by:', this.value);
+            });
+            
+            // Add event listeners for filter changes
+            document.getElementById('category-filter').addEventListener('change', function() {
+                console.log('Category filter changed:', this.value);
+            });
+            
+            document.getElementById('organic-filter').addEventListener('change', function() {
+                console.log('Organic filter changed:', this.value);
+            });
+            
+            document.getElementById('min-price').addEventListener('input', function() {
+                console.log('Min price changed:', this.value);
+            });
+            
+            document.getElementById('max-price').addEventListener('input', function() {
+                console.log('Max price changed:', this.value);
             });
         });
     </script>
