@@ -353,12 +353,19 @@
     <script th:inline="javascript">
         // Make produce data available to JavaScript
         window.producesData = /*[[${produce}]]*/ [];
-
+        
         // Log to verify data is loaded
         console.log("Produces loaded:", window.producesData);
+        console.log("Produces count:", window.producesData.length);
     </script>
     <script>
+        // Initialize data after DOM is loaded
+        let currentViewMode = 'grid';
+        let filteredData = [];
+        let originalProducesData = [];
+
         function setViewMode(mode) {
+            currentViewMode = mode;
             const gridContainer = document.getElementById('grid-view-container');
             const listContainer = document.getElementById('list-view-container');
 
@@ -378,69 +385,303 @@
         }
 
         function applyFilters() {
+            console.log("Apply filters called");
+            console.log("Original data length:", originalProducesData.length);
+            
+            if (originalProducesData.length === 0) {
+                console.warn("No original data available for filtering");
+                return;
+            }
+            
             // Get filter values
-            const categoryFilter = document.getElementById('category-filter').value;
+            const categoryFilter = document.getElementById('category-filter').value.toLowerCase();
             const organicFilter = document.getElementById('organic-filter').value;
-            const minPrice = document.getElementById('min-price').value;
-            const maxPrice = document.getElementById('max-price').value;
+            const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
+            const maxPrice = parseFloat(document.getElementById('max-price').value) || Infinity;
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             
-            // Apply filters logic here
-            console.log('Applying filters:', { categoryFilter, organicFilter, minPrice, maxPrice, searchTerm });
+            console.log("Filter values:", { categoryFilter, organicFilter, minPrice, maxPrice, searchTerm });
             
-            // You can implement actual filtering logic here
-            // For now, just update the results count
+            // Filter the data
+            filteredData = originalProducesData.filter(produce => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    (produce.name && produce.name.toLowerCase().includes(searchTerm)) ||
+                    (produce.description && produce.description.toLowerCase().includes(searchTerm)) ||
+                    (produce.user && produce.user.name && produce.user.name.toLowerCase().includes(searchTerm));
+                
+                // Category filter (based on produce name or description for now)
+                const matchesCategory = !categoryFilter || 
+                    (produce.name && produce.name.toLowerCase().includes(categoryFilter)) ||
+                    (produce.description && produce.description.toLowerCase().includes(categoryFilter));
+                
+                // Organic filter (based on description or name containing "organic")
+                const matchesOrganic = organicFilter === '' ||
+                    (organicFilter === 'organic' && (
+                        (produce.name && produce.name.toLowerCase().includes('organic')) ||
+                        (produce.description && produce.description.toLowerCase().includes('organic'))
+                    )) ||
+                    (organicFilter === 'non-organic' && !(
+                        (produce.name && produce.name.toLowerCase().includes('organic')) ||
+                        (produce.description && produce.description.toLowerCase().includes('organic'))
+                    ));
+                
+                // Price filter
+                const price = parseFloat(produce.price) || 0;
+                const matchesPrice = price >= minPrice && price <= maxPrice;
+                
+                return matchesSearch && matchesCategory && matchesOrganic && matchesPrice;
+            });
+            
+            console.log("Filtered data length:", filteredData.length);
+            
+            // Apply current sort
+            applySorting();
+            
+            // Render filtered results
+            renderProducts();
             updateResultsCount();
         }
 
+        function applySorting() {
+            const sortValue = document.getElementById('sort-select').value;
+            
+            filteredData.sort((a, b) => {
+                switch(sortValue) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'price-low':
+                        return (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0);
+                    case 'price-high':
+                        return (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0);
+                    case 'rating':
+                        return (parseFloat(b.averageRating) || 0) - (parseFloat(a.averageRating) || 0);
+                    case 'popularity':
+                        // Sort by quantity (higher = more popular)
+                        return (parseInt(b.quantity) || 0) - (parseInt(a.quantity) || 0);
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        function renderProducts() {
+            console.log("Rendering products, filtered data length:", filteredData.length);
+            
+            const gridContainer = document.getElementById('grid-view-container');
+            const listContainer = document.getElementById('list-view-container');
+            
+            // Clear existing content
+            gridContainer.innerHTML = '';
+            listContainer.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                const noResultsHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v4.01"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+                        <p class="text-gray-500">Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
+                gridContainer.innerHTML = noResultsHTML;
+                listContainer.innerHTML = noResultsHTML;
+                return;
+            }
+            
+            filteredData.forEach(produce => {
+                // Safely access properties
+                const produceName = produce.name || 'Unknown Product';
+                const producePrice = produce.price || '0.00';
+                const produceDescription = produce.description || '';
+                const produceQuantity = produce.quantity || 0;
+                const produceRating = produce.averageRating ? parseFloat(produce.averageRating).toFixed(1) : '0.0';
+                const produceId = produce.id || '#';
+                const produceImgUrl = produce.imgUrl || '/images/default-produce.jpg';
+                const sellerName = (produce.user && produce.user.name) ? produce.user.name : 'Unknown Seller';
+                const isActive = produce.isActive !== undefined ? produce.isActive : true;
+                
+                // Grid view item
+                const gridItemHTML = `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <img src="${produceImgUrl}" alt="${produceName}" class="w-full h-48 object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBWMTQwSDgwVjYwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNNjAgODBIMTQwVjEyMEg2MFY4MFoiIGZpbGw9IiM2QjcyODAiLz4KPHN2Zz4K'" />
+                        <div class="p-4">
+                            <h3 class="font-semibold text-gray-800 mb-2">${produceName}</h3>
+                            <p class="text-sm text-gray-600 mb-2">by ${sellerName}</p>
+                            <p class="text-sm text-gray-500 mb-2">${produceDescription}</p>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-lg font-bold text-green-600">$${producePrice}</span>
+                                <div class="flex items-center">
+                                    <span class="text-yellow-400">★</span>
+                                    <span class="text-sm text-gray-600 ml-1">${produceRating}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs text-gray-500">Quantity: ${produceQuantity}</span>
+                                <span class="text-xs px-2 py-1 rounded ${isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${isActive ? 'Available' : 'Unavailable'}</span>
+                            </div>
+                            <a href="/public/products/${produceId}" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-center block transition-colors">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                // List view item
+                const listItemHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4 hover:shadow-lg transition-shadow">
+                        <img src="${produceImgUrl}" alt="${produceName}" class="w-20 h-20 object-cover rounded" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBWMTQwSDgwVjYwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNNjAgODBIMTQwVjEyMEg2MFY4MFoiIGZpbGw9IiM2QjcyODAiLz4KPHN2Zz4K'" />
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800 mb-1">${produceName}</h3>
+                            <p class="text-sm text-gray-600 mb-1">by ${sellerName}</p>
+                            <p class="text-sm text-gray-500 mb-2">${produceDescription}</p>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-lg font-bold text-green-600">$${producePrice}</span>
+                                <div class="flex items-center">
+                                    <span class="text-yellow-400">★</span>
+                                    <span class="text-sm text-gray-600 ml-1">${produceRating}</span>
+                                </div>
+                                <span class="text-xs text-gray-500">Qty: ${produceQuantity}</span>
+                                <span class="text-xs px-2 py-1 rounded ${isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${isActive ? 'Available' : 'Unavailable'}</span>
+                            </div>
+                        </div>
+                        <a href="/public/products/${produceId}" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
+                            View Details
+                        </a>
+                    </div>
+                `;
+                
+                gridContainer.innerHTML += gridItemHTML;
+                listContainer.innerHTML += listItemHTML;
+            });
+            
+            console.log("Products rendered successfully");
+        }
+
         function clearFilters() {
+            console.log("Clear filters called");
+            
             // Clear all filter inputs
             document.getElementById('category-filter').value = '';
             document.getElementById('organic-filter').value = '';
             document.getElementById('min-price').value = '';
             document.getElementById('max-price').value = '';
             document.getElementById('search-input').value = '';
+            document.getElementById('sort-select').value = 'name';
             
-            // Reset any applied filters
+            // Reset to original data
+            filteredData = [...originalProducesData];
+            applySorting();
+            renderProducts();
             updateResultsCount();
         }
 
         function updateResultsCount() {
-            const produceCount = document.querySelectorAll('#grid-view-container > div').length;
-            document.getElementById('results-count').textContent = `${produceCount} produce${produceCount !== 1 ? 's' : ''} found`;
+            const produceCount = filteredData.length;
+            document.getElementById('results-count').textContent = `${produceCount} product${produceCount !== 1 ? 's' : ''} found`;
+        }
+
+        function performSearch() {
+            applyFilters();
+        }
+
+        // Function to extract data from existing HTML if Thymeleaf data is not available
+        function extractDataFromHTML() {
+            console.log("Extracting data from HTML as fallback");
+            const products = [];
+            const gridItems = document.querySelectorAll('#grid-view-container > div');
+            
+            gridItems.forEach((item, index) => {
+                try {
+                    const nameElement = item.querySelector('h3');
+                    const priceElement = item.querySelector('.text-green-600');
+                    const descElement = item.querySelector('.text-gray-500');
+                    const sellerElement = item.querySelector('.text-gray-600');
+                    const ratingElement = item.querySelector('.text-gray-600.ml-1');
+                    const quantityElement = item.querySelector('.text-xs.text-gray-500');
+                    const statusElement = item.querySelector('.text-xs.px-2.py-1.rounded');
+                    const linkElement = item.querySelector('a[href*="/public/products/"]');
+                    const imgElement = item.querySelector('img');
+                    
+                    if (nameElement && priceElement) {
+                        const product = {
+                            id: linkElement ? linkElement.href.split('/').pop() : index,
+                            name: nameElement.textContent.trim(),
+                            price: priceElement.textContent.replace('$', '').trim(),
+                            description: descElement ? descElement.textContent.trim() : '',
+                            user: {
+                                name: sellerElement ? sellerElement.textContent.replace('by ', '').trim() : 'Unknown Seller'
+                            },
+                            averageRating: ratingElement ? parseFloat(ratingElement.textContent.trim()) : 0,
+                            quantity: quantityElement ? parseInt(quantityElement.textContent.replace('Quantity: ', '').trim()) : 0,
+                            isActive: statusElement ? statusElement.textContent.trim() === 'Available' : true,
+                            imgUrl: imgElement ? imgElement.src : '/images/default-produce.jpg'
+                        };
+                        products.push(product);
+                    }
+                } catch (error) {
+                    console.warn("Error extracting product data from HTML item:", error);
+                }
+            });
+            
+            console.log("Extracted products from HTML:", products.length);
+            return products;
         }
 
         // Update results count on page load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM Content Loaded");
+            
+            // Initialize data from window.producesData
+            if (window.producesData && window.producesData.length > 0) {
+                originalProducesData = [...window.producesData];
+                filteredData = [...originalProducesData];
+                console.log("Data initialized from Thymeleaf:", originalProducesData.length, "products");
+            } else {
+                console.warn("No Thymeleaf data found, extracting from HTML");
+                // Fallback: extract data from existing HTML
+                originalProducesData = extractDataFromHTML();
+                filteredData = [...originalProducesData];
+                console.log("Data initialized from HTML:", originalProducesData.length, "products");
+            }
+            
             updateResultsCount();
             
             // Add event listeners for real-time search
-            document.getElementById('search-input').addEventListener('input', function() {
-                // Implement search functionality here
-                console.log('Searching for:', this.value);
-            });
+            document.getElementById('search-input').addEventListener('input', performSearch);
             
             document.getElementById('sort-select').addEventListener('change', function() {
-                // Implement sorting functionality here
-                console.log('Sorting by:', this.value);
+                console.log("Sort changed to:", this.value);
+                applySorting();
+                renderProducts();
             });
             
-            // Add event listeners for filter changes
-            document.getElementById('category-filter').addEventListener('change', function() {
-                console.log('Category filter changed:', this.value);
-            });
+            // Add event listeners for filter changes (real-time filtering)
+            document.getElementById('category-filter').addEventListener('change', applyFilters);
+            document.getElementById('organic-filter').addEventListener('change', applyFilters);
+            document.getElementById('min-price').addEventListener('input', applyFilters);
+            document.getElementById('max-price').addEventListener('input', applyFilters);
             
-            document.getElementById('organic-filter').addEventListener('change', function() {
-                console.log('Organic filter changed:', this.value);
-            });
+            // Make sure the Apply button works
+            const applyButton = document.querySelector('button[onclick="applyFilters()"]');
+            if (applyButton) {
+                applyButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log("Apply button clicked");
+                    applyFilters();
+                });
+            }
             
-            document.getElementById('min-price').addEventListener('input', function() {
-                console.log('Min price changed:', this.value);
-            });
-            
-            document.getElementById('max-price').addEventListener('input', function() {
-                console.log('Max price changed:', this.value);
-            });
+            // Make sure the Clear button works  
+            const clearButton = document.querySelector('button[onclick="clearFilters()"]');
+            if (clearButton) {
+                clearButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log("Clear button clicked");
+                    clearFilters();
+                });
+            }
         });
     </script>
 </body>
