@@ -295,5 +295,110 @@
             });
         });
     </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white ml-64">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 text-green-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 9 5.16-1 9-3.45 9-9V7l-10-5z"/>
+                        </svg>
+                        <span class="text-xl font-bold">AgriMarket Manager</span>
+                    </div>
+                    <p class="text-gray-300 mb-4 max-w-md">
+                        Comprehensive platform management system for AgriMarket. Monitor users, products, sellers, and orders efficiently.
+                    </p>
+                    <p class="text-sm text-gray-400">
+                        © 2025 AgriMarket. All rights reserved.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="/manager/home" class="text-gray-300 hover:text-green-400 transition-colors">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/manager/users" class="text-gray-300 hover:text-green-400 transition-colors">
+                                Manage Users
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/manager/products" class="text-gray-300 hover:text-green-400 transition-colors">
+                                Manage Products
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/manager/sellers" class="text-gray-300 hover:text-green-400 transition-colors">
+                                Manage Sellers
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/manager/orders" class="text-gray-300 hover:text-green-400 transition-colors">
+                                Manage Orders
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Manager Tools -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Manager Tools</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
+                                Platform Analytics
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
+                                System Reports
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
+                                User Activity Logs
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
+                                Platform Settings
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout" class="text-gray-300 hover:text-red-400 transition-colors">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-700 mt-8 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="text-sm text-gray-400">
+                        <span>Manager Dashboard v1.0</span>
+                        <span class="mx-2">•</span>
+                        <span>Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}">21/07/2025</span></span>
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                        <span class="text-sm text-gray-400">Platform Status:</span>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                            <span class="text-sm text-green-400">Online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
