@@ -137,6 +137,36 @@ public class OrderServiceImpl implements OrderService {
         return toDTO(orderRepository.save(order));
     }
 
+    @Override
+    public List<Order> getOrdersBySellerId(Long sellerId) {
+        return orderRepository.findByOrderDetails_Produce_User_Id(sellerId);
+    }
+
+    @Override
+    public void markOrderAsCompleted(Long orderId) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setStatus(OrderStatus.COMPLETED);
+            orderRepository.save(order);
+        });
+    }
+
+    @Override
+    public void markOrderAsCancelled(Long orderId) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setStatus(OrderStatus.CANCELLED);
+            orderRepository.save(order);
+        });
+    }
+
+    @Override
+    public void markOrderAsPaid(Long orderId) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setStatus(OrderStatus.PAID);
+            order.setPaymentDate(LocalDate.now());
+            orderRepository.save(order);
+        });
+    }
+
     private Order findOrderById(Long id) {
         return orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
     }

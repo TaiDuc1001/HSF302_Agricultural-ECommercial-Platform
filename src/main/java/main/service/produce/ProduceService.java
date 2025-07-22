@@ -11,5 +11,6 @@ public interface ProduceService {
     List<Produce> getAllProduce();
     Produce getProduceById(Long id);
     List<Produce> getProduceWithAverageRating();
+    List<Produce> getProduceBySellerId(Long sellerId);
 //    List<Produce> getProduceWithSoldCount();
 }
