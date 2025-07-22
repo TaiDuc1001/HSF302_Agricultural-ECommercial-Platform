@@ -1,8 +1,12 @@
 package main.controller;
 
 import lombok.RequiredArgsConstructor;
+import main.dto.CategoryDTO;
 import main.dto.UserDTO;
 import main.enumerators.Role;
+import main.pojo.Produce;
+import main.service.category.CategoryService;
+import main.service.produce.ProduceService;
 import main.service.user.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,12 +17,15 @@ import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/manager")
 @RequiredArgsConstructor
 public class ManagerController {
     private final UserService userService;
+    private final ProduceService produceService;
+    private final CategoryService categoryService;
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         UserDTO user = (UserDTO) session.getAttribute("user");
@@ -124,13 +131,72 @@ public class ManagerController {
     }
 
     @GetMapping("/products")
-    public String products(HttpSession session, Model model) {
+    public String products(HttpSession session, Model model,
+                           @RequestParam(required = false) String status,
+                           @RequestParam(required = false) Long category,
+                           @RequestParam(required = false) String search) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null || !"MANAGER".equals(user.getRole().toString())) {
+            return "redirect:/auth/login";
+        }
+        List<Produce> allProducts = produceService.getProduceWithAverageRating();
+        List<CategoryDTO> allCategories = categoryService.getAllCategories();
+        List<Produce> filteredProducts = allProducts.stream()
+                .filter(p -> {
+                    if (status == null || status.isEmpty()) {
+                        return true;
+                    }
+                    boolean statusBool = "ACTIVE".equalsIgnoreCase(status);
+                    return p.getIsActive() == statusBool;
+                })
+                .filter(p -> (category == null) || p.getCategory().getId().equals(category))
+                .filter(p -> (search == null || search.isEmpty()) || p.getName().toLowerCase().contains(search.toLowerCase()))
+                .collect(Collectors.toList());
+        long totalProducts = allProducts.size();
+        long activeProducts = allProducts.stream().filter(p -> p.getIsActive()== true).count();
+        long inactiveProducts = totalProducts - activeProducts;
+        model.addAttribute("name", user.getName());
+        model.addAttribute("products", filteredProducts);
+        model.addAttribute("categories", allCategories);
+        model.addAttribute("totalProducts", totalProducts);
+        model.addAttribute("activeProducts", activeProducts);
+        model.addAttribute("inactiveProducts", inactiveProducts);
+        model.addAttribute("currentStatus", status);
+        model.addAttribute("currentCategory", category);
+        model.addAttribute("currentSearch", search);
+        return "manager/products";
+    }
+    @GetMapping("/products/{productId}")
+    public String productDetail(@PathVariable Long productId, HttpSession session, Model model) {
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user == null || !"MANAGER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
 
-        return "manager/products";
+        try {
+            Produce product = produceService.getProduceById(productId);
+            model.addAttribute("name", user.getName());
+            model.addAttribute("product", product);
+            return "manager/product-detail";
+        } catch (Exception e) {
+            return "redirect:/manager/products";
+        }
+    }
+    @PostMapping("/products/{productId}/status")
+    @ResponseBody
+    public Map<String, Object> updateProductStatus(@PathVariable Long productId, @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String status = request.get("status");
+            boolean isActive = "ACTIVE".equalsIgnoreCase(status);
+            produceService.updateProduceStatus(productId, isActive);
+            response.put("success", true);
+            response.put("message", "Product status updated successfully.");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to update product status: " + e.getMessage());
+        }
+        return response;
     }
 
     @GetMapping("/orders")

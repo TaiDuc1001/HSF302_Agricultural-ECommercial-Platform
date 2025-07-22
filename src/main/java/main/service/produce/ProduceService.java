@@ -12,4 +12,6 @@ public interface ProduceService {
     Produce getProduceById(Long id);
     List<Produce> getProduceWithAverageRating();
 //    List<Produce> getProduceWithSoldCount();
+
+    Produce updateProduceStatus(Long productId, boolean isActive);
 }
