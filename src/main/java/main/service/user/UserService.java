@@ -17,5 +17,6 @@ public interface UserService {
     public abstract UserDTO createUser(UserDTO userDTO);
     public abstract UserDTO updateUserStatus(Long userId, Boolean isActive);
     public abstract List<UserDTO> searchUsers(String searchTerm);
+    public abstract User findByID(Long id);
 
 }

@@ -52,4 +52,16 @@ public class Produce {
 
     @OneToMany(mappedBy = "produce")
     List<DiscountCode> discountCodes;
+
+    public Produce(BigDecimal price, String name, String description, Integer quantity, Boolean isActive, Category category, LocalDate preOrderEndDate, LocalDate preOrderStartDate, String imgUrl) {
+        this.price = price;
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+        this.isActive = isActive;
+        this.category = category;
+        this.preOrderEndDate = preOrderEndDate;
+        this.preOrderStartDate = preOrderStartDate;
+        this.imgUrl = imgUrl;
+    }
 }
