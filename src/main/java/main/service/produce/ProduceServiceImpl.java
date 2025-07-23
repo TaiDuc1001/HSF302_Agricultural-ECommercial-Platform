@@ -45,6 +45,26 @@ public class ProduceServiceImpl implements ProduceService{
         return produceRepository.findByUser_Id(sellerId);
     }
 
+    @Override
+    public void saveProduce(Produce produce) {
+        produceRepository.save(produce);
+    }
+
+    @Override
+    public void deleteProduce(Long id) {
+        Produce produce = produceRepository.findById(id).orElse(null);
+        if (produce == null) {
+            throw new EntityNotFoundException("Produce not found with id: " + id);
+        }
+        if( produce.getIsActive()) {
+            produce.setIsActive(false);
+        }
+        else{
+            produce.setIsActive(true);
+        }
+        produceRepository.save(produce);
+    }
+
 //    @Override
 //    public List<Produce> getProduceWithSoldCount() {
 //        return List.of();

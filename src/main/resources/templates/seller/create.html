@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Add New Product</h1>
+
+    <!-- Add Product Form -->
+    <form th:action="@{/seller/add-product}" th:object="${product}" method="post" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="name" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+            <div class="invalid-feedback">Please provide a product name.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" th:field="*{description}" rows="4"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" step="0.01" class="form-control" id="price" th:field="*{price}" required>
+            <div class="invalid-feedback">Please provide a valid price.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" required>
+            <div class="invalid-feedback">Please provide a valid quantity.</div>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="isActive" th:field="*{isActive}">
+            <label class="form-check-label" for="isActive">Active</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" th:field="*{category.id}" required>
+                <option value="">Select a category</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+            <div class="invalid-feedback">Please select a category.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="preOrderStartDate" class="form-label">Pre-order Start Date</label>
+            <input type="date" class="form-control" id="preOrderStartDate" th:field="*{preOrderStartDate}">
+        </div>
+
+        <div class="mb-3">
+            <label for="preOrderEndDate" class="form-label">Pre-order End Date</label>
+            <input type="date" class="form-control" id="preOrderEndDate" th:field="*{preOrderEndDate}">
+        </div>
+
+        <div class="mb-3">
+            <label for="imgUrl" class="form-label">Image URL</label>
+            <input type="url" class="form-control" id="imgUrl" th:field="*{imgUrl}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Product</button>
+        <a th:href="@{/seller/products}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Bootstrap form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+</body>
+</html>
