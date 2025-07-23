@@ -26,6 +26,7 @@ public class ManagerController {
     private final UserService userService;
     private final ProduceService produceService;
     private final CategoryService categoryService;
+
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         UserDTO user = (UserDTO) session.getAttribute("user");
@@ -42,7 +43,7 @@ public class ManagerController {
 
         return "manager/home";
     }
-    
+
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         return "redirect:/manager/home";
@@ -153,7 +154,7 @@ public class ManagerController {
                 .filter(p -> (search == null || search.isEmpty()) || p.getName().toLowerCase().contains(search.toLowerCase()))
                 .collect(Collectors.toList());
         long totalProducts = allProducts.size();
-        long activeProducts = allProducts.stream().filter(p -> p.getIsActive()== true).count();
+        long activeProducts = allProducts.stream().filter(p -> p.getIsActive() == true).count();
         long inactiveProducts = totalProducts - activeProducts;
         model.addAttribute("name", user.getName());
         model.addAttribute("products", filteredProducts);
@@ -166,6 +167,7 @@ public class ManagerController {
         model.addAttribute("currentSearch", search);
         return "manager/products";
     }
+
     @GetMapping("/products/{productId}")
     public String productDetail(@PathVariable Long productId, HttpSession session, Model model) {
         UserDTO user = (UserDTO) session.getAttribute("user");
@@ -182,6 +184,7 @@ public class ManagerController {
             return "redirect:/manager/products";
         }
     }
+
     @PostMapping("/products/{productId}/status")
     @ResponseBody
     public Map<String, Object> updateProductStatus(@PathVariable Long productId, @RequestBody Map<String, String> request) {
@@ -210,12 +213,84 @@ public class ManagerController {
     }
 
     @GetMapping("/sellers")
-    public String sellers(HttpSession session, Model model) {
+    public String sellers(
+            HttpSession session,
+            Model model,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String search) {
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user == null || !"MANAGER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
+        List<UserDTO> sellers = userService.getUsersByRole(Role.SELLER);
 
+        // Filter theo trạng thái
+        if (status != null && !status.isEmpty()) {
+            boolean isActive = "ACTIVE".equalsIgnoreCase(status);
+            sellers = sellers.stream()
+                    .filter(s -> Boolean.TRUE.equals(s.getIsActive()) == isActive)
+                    .collect(Collectors.toList());
+        }
+
+        // Search theo tên hoặc email
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.trim().toLowerCase();
+            sellers = sellers.stream()
+                    .filter(s -> (s.getName() != null && s.getName().toLowerCase().contains(searchLower)) ||
+                            (s.getEmail() != null && s.getEmail().toLowerCase().contains(searchLower)))
+                    .collect(Collectors.toList());
+        }
+
+        // Bổ sung thông tin thống kê cho từng seller
+        for (UserDTO seller : sellers) {
+            Long sellerId = seller.getId();
+            seller.setProductCount(userService.countProductsBySellerId(sellerId));
+            seller.setOrderCount(userService.countOrdersBySellerId(sellerId));
+            seller.setTotalRevenue(userService.sumRevenueBySellerId(sellerId));
+            seller.setRating(userService.averageRatingBySellerId(sellerId));
+            seller.setReviewCount(userService.countReviewsBySellerId(sellerId));
+        }
+
+        model.addAttribute("sellers", sellers);
+        model.addAttribute("totalSellers", sellers.size());
+        long activeSellers = sellers.stream().filter(UserDTO::getIsActive).count();
+        model.addAttribute("activeSellers", activeSellers);
+        model.addAttribute("inactiveSellers", sellers.size() - activeSellers);
+        model.addAttribute("name", user.getName());
+        model.addAttribute("currentStatus", status);
+        model.addAttribute("currentSearch", search);
         return "manager/sellers";
+    }
+    @GetMapping("/sellers/{sellerId}")
+    public String viewSellerDetail(@PathVariable Long sellerId, HttpSession session, Model model) {
+        UserDTO manager = (UserDTO) session.getAttribute("user");
+        if (manager == null || !"MANAGER".equals(manager.getRole().toString())) {
+            return "redirect:/auth/login";
+        }
+        UserDTO seller = userService.getUserById(sellerId);
+        // Bổ sung các thống kê nếu cần
+        seller.setProductCount(userService.countProductsBySellerId(sellerId));
+        seller.setOrderCount(userService.countOrdersBySellerId(sellerId));
+        seller.setTotalRevenue(userService.sumRevenueBySellerId(sellerId));
+        seller.setRating(userService.averageRatingBySellerId(sellerId));
+        seller.setReviewCount(userService.countReviewsBySellerId(sellerId));
+        model.addAttribute("seller", seller);
+        model.addAttribute("name", manager.getName());
+        return "manager/seller-detail";
+    }
+    @PostMapping("/sellers/{sellerId}/status")
+    @ResponseBody
+    public Map<String, Object> changeSellerStatus(@PathVariable Long sellerId, @RequestBody Map<String, Boolean> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Boolean activate = request.get("activate");
+            UserDTO updatedSeller = userService.updateUserStatus(sellerId, activate);
+            response.put("success", true);
+            response.put("seller", updatedSeller);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to update seller status: " + e.getMessage());
+        }
+        return response;
     }
 }

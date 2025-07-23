@@ -16,4 +16,9 @@ public class UserDTO {
     String phone;
     Role role;
     Boolean isActive;
+    Integer productCount;
+    Integer orderCount;
+    Double totalRevenue;
+    Double rating;
+    Integer reviewCount;
 }

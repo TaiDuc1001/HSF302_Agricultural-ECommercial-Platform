@@ -17,5 +17,9 @@ public interface UserService {
     public abstract UserDTO createUser(UserDTO userDTO);
     public abstract UserDTO updateUserStatus(Long userId, Boolean isActive);
     public abstract List<UserDTO> searchUsers(String searchTerm);
-
+    int countProductsBySellerId(Long sellerId);
+    int countOrdersBySellerId(Long sellerId);
+    double sumRevenueBySellerId(Long sellerId);
+    double averageRatingBySellerId(Long sellerId);
+    int countReviewsBySellerId(Long sellerId);
 }

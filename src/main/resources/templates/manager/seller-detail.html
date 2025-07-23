@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<div class="max-w-2xl mx-auto mt-10 bg-white p-8 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4" th:text="'Seller: ' + ${seller.name}">Seller: Name</h1>
+    <p><strong>Email:</strong> <span th:text="${seller.email}">email@example.com</span></p>
+    <p><strong>Address:</strong> <span th:text="${seller.address}">Address</span></p>
+    <p><strong>Phone:</strong> <span th:text="${seller.phone}">Phone</span></p>
+    <p><strong>Status:</strong>
+        <span th:text="${seller.isActive} ? 'ACTIVE' : 'INACTIVE'">ACTIVE</span>
+    </p>
+    <hr class="my-4">
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <p><strong>Products:</strong> <span th:text="${seller.productCount}">0</span></p>
+            <p><strong>Orders:</strong> <span th:text="${seller.orderCount}">0</span></p>
+            <p><strong>Revenue:</strong> <span th:text="|$${#numbers.formatDecimal(seller.totalRevenue, 1, 2)}|">$0.00</span></p>
+        </div>
+        <div>
+            <p><strong>Rating:</strong> <span th:text="${seller.rating}">0.0</span></p>
+            <p><strong>Reviews:</strong> <span th:text="${seller.reviewCount}">0</span></p>
+        </div>
+    </div>
+    <div class="mt-6">
+        <a href="/manager/sellers" class="text-blue-600 hover:underline">Back to Sellers List</a>
+    </div>
+</div>
+</body>
+</html>
