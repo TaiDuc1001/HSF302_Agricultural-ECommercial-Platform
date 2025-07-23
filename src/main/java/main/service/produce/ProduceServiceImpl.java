@@ -31,6 +31,12 @@ public class ProduceServiceImpl implements ProduceService{
     public Produce getProduceById(Long id) {
         return produceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produce not found with id: " + id));
     }
+    @Override
+    public Produce updateProduceStatus(Long productId, boolean isActive) {
+        Produce produce = getProduceById(productId);
+        produce.setIsActive(isActive);
+        return produceRepository.save(produce);
+    }
 
     @Override
     public List<Produce> getProduceWithAverageRating() {

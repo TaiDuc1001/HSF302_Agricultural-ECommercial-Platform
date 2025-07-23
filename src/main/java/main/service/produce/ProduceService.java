@@ -15,4 +15,6 @@ public interface ProduceService {
     void saveProduce(Produce produce);
     void deleteProduce(Long id);
 //    List<Produce> getProduceWithSoldCount();
+
+    Produce updateProduceStatus(Long productId, boolean isActive);
 }

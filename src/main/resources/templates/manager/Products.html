@@ -42,13 +42,9 @@
                         <div class="text-2xl font-bold text-blue-600" th:text="${activeProducts ?: 0}">0</div>
                         <div class="text-sm text-gray-600">Active Products</div>
                     </div>
-                    <div class="bg-yellow-50 p-4 rounded-lg">
-                        <div class="text-2xl font-bold text-yellow-600" th:text="${pendingReview ?: 0}">0</div>
-                        <div class="text-sm text-gray-600">Pending Review</div>
-                    </div>
                     <div class="bg-red-50 p-4 rounded-lg">
-                        <div class="text-2xl font-bold text-red-600" th:text="${rejectedProducts ?: 0}">0</div>
-                        <div class="text-sm text-gray-600">Rejected</div>
+                        <div class="text-2xl font-bold text-red-600" th:text="${inactiveProducts ?: 0}">0</div>
+                        <div class="text-sm text-gray-600">Inactive Products</div>
                     </div>
                 </div>
             </div>
@@ -60,8 +56,6 @@
                         <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
                             <option value="">All Status</option>
                             <option value="ACTIVE">Active</option>
-                            <option value="PENDING">Pending Review</option>
-                            <option value="REJECTED">Rejected</option>
                             <option value="INACTIVE">Inactive</option>
                         </select>
                         <select id="category-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
@@ -78,52 +72,46 @@
                 <div th:if="${products != null and not #lists.isEmpty(products)}">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div th:each="product : ${products}" class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <img th:src="${product.image != null ? product.image : '/images/default-product.jpg'}" 
+                            <img th:src="${product.imgUrl != null ? product.imgUrl : '/images/default-product.jpg'}"
                                  th:alt="${product.name}" 
                                  class="w-full h-48 object-cover rounded-t-lg">
                             <div class="p-4">
                                 <div class="flex justify-between items-start mb-2">
                                     <h3 class="text-lg font-semibold text-gray-800" th:text="${product.name}">Product Name</h3>
                                     <span class="px-2 py-1 rounded-full text-xs font-medium"
-                                          th:classappend="${product.status == 'ACTIVE'} ? 'bg-green-100 text-green-800' : 
-                                                         ${product.status == 'PENDING'} ? 'bg-yellow-100 text-yellow-800' : 
-                                                         ${product.status == 'REJECTED'} ? 'bg-red-100 text-red-800' : 
-                                                         'bg-gray-100 text-gray-800'"
-                                          th:text="${product.status}">ACTIVE</span>
+                                          th:classappend="${product.isActive} ? ' bg-green-100 text-green-800' : ' bg-yellow-100 text-yellow-800'"
+                                          th:text="${product.isActive} ? 'ACTIVE' : 'INACTIVE'">ACTIVE</span>
                                 </div>
-                                <p class="text-sm text-gray-600 mb-2" th:text="|by ${product.sellerName}|">by Seller Name</p>
+                                <p class="text-sm text-gray-600 mb-2" th:text="|by ${product.user.name}|">by Seller Name</p>
                                 <p class="text-sm text-gray-500 mb-3" th:text="${product.category.name}">Category</p>
                                 
                                 <div class="flex justify-between items-center mb-3">
                                     <span class="text-lg font-bold text-green-600" th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|">$0.00</span>
                                     <div class="flex items-center gap-1">
                                         <span class="text-yellow-400">★</span>
-                                        <span class="text-sm text-gray-600" th:text="${product.rating ?: '0.0'}">0.0</span>
-                                        <span class="text-xs text-gray-500" th:text="|${product.reviewCount ?: 0} reviews|">(0 reviews)</span>
+                                        <span class="text-sm text-gray-600" th:text="${product.averageRating ?: '0.0'}">0.0</span>
+                                        <span class="text-xs text-gray-500" th:text="|${#lists.size(product.reviews)} reviews|">(0 reviews)</span>
                                     </div>
                                 </div>
                                 
-                                <p class="text-xs text-gray-500 mb-3" th:text="|Stock: ${product.stock} | Sold: ${product.soldCount ?: 0}|">Stock: 0 | Sold: 0</p>
+                                <p class="text-xs text-gray-500 mb-3" th:text="|Stock: ${product.quantity}|">Stock: 0 </p>
                                 
                                 <div class="flex space-x-2">
                                     <button th:onclick="|viewProduct(${product.id})|" 
                                             class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
                                         View Details
                                     </button>
-                                    <button th:if="${product.status == 'PENDING'}" 
-                                            th:onclick="|approveProduct(${product.id})|" 
-                                            class="flex-1 bg-green-600 text-white py-2 px-3 rounded text-sm hover:bg-green-700">
-                                        Approve
-                                    </button>
-                                    <button th:if="${product.status == 'PENDING'}" 
-                                            th:onclick="|rejectProduct(${product.id})|" 
-                                            class="flex-1 bg-red-600 text-white py-2 px-3 rounded text-sm hover:bg-red-700">
-                                        Reject
-                                    </button>
-                                    <button th:if="${product.status == 'ACTIVE'}" 
-                                            th:onclick="|deactivateProduct(${product.id})|" 
-                                            class="flex-1 bg-gray-600 text-white py-2 px-3 rounded text-sm hover:bg-gray-700">
+                                    <button th:if="${product.isActive}"
+                                            th:onclick="|deactivateProduct(${product.id})|"
+                                            class="flex-1 bg-yellow-600 text-white py-2 px-3 rounded text-sm hover:bg-yellow-700">
                                         Deactivate
+                                    </button>
+
+                                    <!-- Hiển thị nút Activate nếu sản phẩm đang inactive -->
+                                    <button th:if="${!product.isActive}"
+                                            th:onclick="|approveProduct(${product.id})|"
+                                            class="flex-1 bg-green-600 text-white py-2 px-3 rounded text-sm hover:bg-green-700">
+                                        Activate
                                     </button>
                                 </div>
                             </div>

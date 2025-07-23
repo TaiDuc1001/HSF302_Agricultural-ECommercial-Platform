@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="|${product.name} - Product Details|">Product Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<nav class="bg-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold text-green-600">AgriMarket Manager</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-700" th:text="|Welcome, ${name}|">Welcome, Manager</span>
+                <a href="/manager/products" class="text-blue-600 hover:text-blue-800">Back to Products</a>
+                <a href="/auth/logout" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="p-8" th:object="${product}">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 border-b pb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900" th:text="*{name}">Product Name</h1>
+                    <p class="text-sm text-gray-500" th:text="|Category: *{category.name}|">Category</p>
+                </div>
+                <div class="flex space-x-2 mt-4 md:mt-0">
+                    <!-- Activate/Deactivate Buttons -->
+                    <button th:if="*{!isActive}" th:onclick="|approveProduct(*{id})|" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Activate</button>
+                    <button th:if="*{isActive}" th:onclick="|deactivateProduct(*{id})|" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Deactivate</button>
+                </div>
+            </div>
+
+            <!-- Product Body -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Left: Image & Description -->
+                <div class="md:col-span-2">
+                    <img th:src="*{imgUrl ?: '/images/default-product.jpg'}" alt="Product Image" class="w-full h-auto max-h-96 object-contain rounded-lg border mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Description</h2>
+                    <p class="text-gray-700" th:text="*{description}">Product description goes here.</p>
+                </div>
+
+                <!-- Right: Stats & Info -->
+                <div class="md:col-span-1">
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Price</label>
+                            <p class="text-2xl font-bold text-green-600" th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|">$0.00</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Status</label>
+                            <p class="text-lg font-semibold" th:classappend="*{isActive} ? 'text-green-600' : 'text-yellow-600'" th:text="*{isActive} ? 'Active' : 'Inactive'">Status</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Stock</label>
+                            <p class="text-lg font-semibold text-gray-800" th:text="*{quantity}">0</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Sold</label>
+                            <p class="text-lg font-semibold text-gray-800" th:text="${#lists.size(product.userItems)}">0</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Seller</label>
+                            <p class="text-lg font-semibold text-blue-600" th:text="*{user.name}">Seller Name</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="mt-10 pt-6 border-t">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Reviews (<span th:text="${#lists.size(product.reviews)}">0</span>)</h2>
+                <div th:if="${#lists.isEmpty(product.reviews)}" class="text-center py-8 text-gray-500">
+                    <p>This product has no reviews yet.</p>
+                </div>
+                <div th:if="${not #lists.isEmpty(product.reviews)}" class="space-y-4">
+                    <div th:each="review : *{reviews}" class="bg-gray-50 p-4 rounded-lg border">
+                        <div class="flex items-center mb-2">
+                            <p class="font-semibold text-gray-900" th:text="${review.user.name}">Reviewer Name</p>
+                            <div class="ml-auto flex items-center">
+                                <span class="text-yellow-400">★</span>
+                                <span class="text-sm font-bold text-gray-700" th:text="${review.rating}">5</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-700" th:text="${review.comment}">Review comment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function approveProduct(productId) {
+        if (confirm('Are you sure you want to activate this product?')) {
+            updateProductStatus(productId, 'ACTIVE');
+        }
+    }
+
+    function deactivateProduct(productId) {
+        if (confirm('Are you sure you want to deactivate this product?')) {
+            updateProductStatus(productId, 'INACTIVE');
+        }
+    }
+
+    function updateProductStatus(productId, status) {
+        fetch('/manager/products/' + productId + '/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: status })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to update product status: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating product status');
+            });
+    }
+</script>
+</body>
+</html>
