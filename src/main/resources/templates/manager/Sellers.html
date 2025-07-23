@@ -94,10 +94,6 @@
                                     <div class="text-lg font-bold text-gray-800" th:text="${seller.orderCount != null ? seller.orderCount : 0}">0</div>
                                     <div class="text-xs text-gray-600">Orders</div>
                                 </div>
-                                <div class="text-center">
-                                    <div class="text-lg font-bold text-green-600" th:text="|$${#numbers.formatDecimal(seller.totalRevenue != null ? seller.totalRevenue : 0, 1, 2)}|">$0.00</div>
-                                    <div class="text-xs text-gray-600">Revenue</div>
-                                </div>
                             </div>
 
                             <div class="flex items-center mb-4">

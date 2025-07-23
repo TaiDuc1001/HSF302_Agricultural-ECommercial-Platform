@@ -19,4 +19,5 @@ public interface OrderService {
     public abstract void markOrderAsCompleted(Long orderId);
     public abstract void markOrderAsCancelled(Long orderId);
     public abstract void markOrderAsPaid(Long orderId);
+
 }

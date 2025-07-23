@@ -2,10 +2,15 @@ package main.controller;
 
 import lombok.RequiredArgsConstructor;
 import main.dto.CategoryDTO;
+import main.dto.OrderDTO;
+import main.dto.OrderItemDTO;
 import main.dto.UserDTO;
 import main.enumerators.Role;
+import main.pojo.Order;
+import main.pojo.OrderDetail;
 import main.pojo.Produce;
 import main.service.category.CategoryService;
+import main.service.order.OrderService;
 import main.service.produce.ProduceService;
 import main.service.user.UserService;
 import org.springframework.stereotype.Controller;
@@ -14,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +34,7 @@ public class ManagerController {
     private final UserService userService;
     private final ProduceService produceService;
     private final CategoryService categoryService;
+    private final OrderService orderService;
 
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
@@ -203,11 +212,120 @@ public class ManagerController {
     }
 
     @GetMapping("/orders")
-    public String orders(HttpSession session, Model model) {
+    public String orders(
+            HttpSession session,
+            Model model,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String dateFrom,
+            @RequestParam(required = false) String dateTo,
+            @RequestParam(required = false) String search) {
+
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user == null || !"MANAGER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
+
+        List<OrderDTO> allOrders = orderService.getAllOrders();
+
+        // Map userId -> userName, userId -> address
+        Map<Long, UserDTO> userIdToUser = userService.getAllUsers().stream()
+                .collect(Collectors.toMap(UserDTO::getId, u -> u));
+
+        // Set buyerName, shippingAddress, sellerName, orderItems cho từng order
+        for (OrderDTO order : allOrders) {
+            UserDTO buyer = userIdToUser.get(order.getUserId());
+            order.setBuyerName(buyer != null ? buyer.getName() : "");
+            order.setShippingAddress(buyer != null ? buyer.getAddress() : "");
+
+            // Lấy sellerName từ OrderDetail đầu tiên (nếu có)
+            String sellerName = "";
+            List<OrderDetail> details = new ArrayList<>();
+            Order orderEntity = orderService.getOrderById(order.getId());
+            if (orderEntity != null && orderEntity.getOrderDetails() != null && !orderEntity.getOrderDetails().isEmpty()) {
+                details = orderEntity.getOrderDetails();
+                var firstDetail = details.get(0);
+                if (firstDetail.getProduce() != null && firstDetail.getProduce().getUser() != null) {
+                    sellerName = firstDetail.getProduce().getUser().getName();
+                }
+            }
+            order.setSellerName(sellerName);
+
+            // Map orderItems
+            List<OrderItemDTO> items = new ArrayList<>();
+            for (OrderDetail od : details) {
+                OrderItemDTO item = new OrderItemDTO();
+                item.setProductName(od.getProduce().getName());
+                item.setQuantity(od.getQuantity());
+                item.setPrice(od.getUnitPrice());
+                items.add(item);
+            }
+            order.setOrderItems(items);
+        }
+
+        // Filter theo trạng thái
+        if (status != null && !status.isEmpty()) {
+            allOrders = allOrders.stream()
+                    .filter(o -> o.getStatus() != null && o.getStatus().toString().equalsIgnoreCase(status))
+                    .collect(Collectors.toList());
+        }
+
+        // Filter theo ngày
+        if (dateFrom != null && !dateFrom.isEmpty()) {
+            LocalDate from = LocalDate.parse(dateFrom);
+            allOrders = allOrders.stream()
+                    .filter(o -> o.getOrderDate() != null && !o.getOrderDate().isBefore(from))
+                    .collect(Collectors.toList());
+        }
+        if (dateTo != null && !dateTo.isEmpty()) {
+            LocalDate to = LocalDate.parse(dateTo);
+            allOrders = allOrders.stream()
+                    .filter(o -> o.getOrderDate() != null && !o.getOrderDate().isAfter(to))
+                    .collect(Collectors.toList());
+        }
+
+        // Search theo buyer/seller name hoặc id
+// Search theo tên sản phẩm (orderName), buyer, seller, id
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.trim().toLowerCase();
+            allOrders = allOrders.stream()
+                    .filter(o -> {
+                        // Search theo tên sản phẩm trong orderItems
+                        boolean matchProduct = false;
+                        if (o.getOrderItems() != null) {
+                            matchProduct = o.getOrderItems().stream()
+                                    .anyMatch(item -> item.getProductName() != null && item.getProductName().toLowerCase().contains(searchLower));
+                        }
+                        String buyerName = o.getBuyerName();
+                        String sellerName = o.getSellerName();
+                        return matchProduct
+                                || (buyerName != null && buyerName.toLowerCase().contains(searchLower))
+                                || (sellerName != null && sellerName.toLowerCase().contains(searchLower))
+                                || (o.getId() != null && o.getId().toString().contains(searchLower));
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // Thống kê
+        long totalOrders = allOrders.size();
+        long pendingOrders = allOrders.stream().filter(o -> o.getStatus() != null && o.getStatus().toString().equals("CREATED")).count();
+        long completedOrders = allOrders.stream().filter(o -> o.getStatus() != null && o.getStatus().toString().equals("COMPLETED")).count();
+        long cancelledOrders = allOrders.stream().filter(o -> o.getStatus() != null && o.getStatus().toString().equals("CANCELLED")).count();
+        double totalRevenue = allOrders.stream()
+                .filter(o -> o.getFinalAmount() != null)
+                .mapToDouble(o -> o.getFinalAmount().doubleValue())
+                .sum();
+
+        model.addAttribute("orders", allOrders);
+        model.addAttribute("totalOrders", totalOrders);
+        model.addAttribute("pendingOrders", pendingOrders);
+        model.addAttribute("completedOrders", completedOrders);
+        model.addAttribute("cancelledOrders", cancelledOrders);
+        model.addAttribute("totalRevenue", totalRevenue);
+        model.addAttribute("name", user.getName());
+        model.addAttribute("currentStatus", status);
+        model.addAttribute("currentSearch", search);
+        model.addAttribute("dateFrom", dateFrom);
+        model.addAttribute("dateTo", dateTo);
 
         return "manager/orders";
     }

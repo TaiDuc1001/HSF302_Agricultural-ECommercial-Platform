@@ -19,7 +19,6 @@
         <div>
             <p><strong>Products:</strong> <span th:text="${seller.productCount}">0</span></p>
             <p><strong>Orders:</strong> <span th:text="${seller.orderCount}">0</span></p>
-            <p><strong>Revenue:</strong> <span th:text="|$${#numbers.formatDecimal(seller.totalRevenue, 1, 2)}|">$0.00</span></p>
         </div>
         <div>
             <p><strong>Rating:</strong> <span th:text="${seller.rating}">0.0</span></p>
