@@ -46,6 +46,11 @@ public class ProduceServiceImpl implements ProduceService{
                 .toList();
     }
 
+    @Override
+    public List<Produce> getProduceBySellerId(Long sellerId) {
+        return produceRepository.findByUser_Id(sellerId);
+    }
+
 //    @Override
 //    public List<Produce> getProduceWithSoldCount() {
 //        return List.of();

@@ -15,4 +15,8 @@ public interface OrderService {
     public abstract OrderDTO toDTO(Order order);
     public abstract List<OrderDTO> toDTOs(List<Order> orders);
     public abstract OrderDTO updateOrderStatus(Long id, OrderDTO orderDTO);
+    public abstract List<Order> getOrdersBySellerId(Long sellerId);
+    public abstract void markOrderAsCompleted(Long orderId);
+    public abstract void markOrderAsCancelled(Long orderId);
+    public abstract void markOrderAsPaid(Long orderId);
 }

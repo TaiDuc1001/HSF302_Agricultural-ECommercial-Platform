@@ -9,6 +9,8 @@ import main.repository.OrderDetailRepository;
 import main.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class OrderDetailServiceImpl implements OrderDetailService {
@@ -25,5 +27,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + orderId));
         OrderDetail orderDetail = new OrderDetail(null, userItem.getQuantity(), userItem.getProduce().getPrice(), order, userItem.getProduce());
         return createOrderDetail(orderDetail);
+    }
+
+    @Override
+    public List<OrderDetail> getOrderDetailsBySellId(Long sellId) {
+        return orderDetailRepository.getOrderDetailByProduce_User_Id(sellId);
     }
 }
