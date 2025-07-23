@@ -7,322 +7,93 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <header class="bg-green-600 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo and Brand -->
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <svg class="w-8 h-8 text-white mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 9 5.16-1 9-3.45 9-9V7l-10-5z"/>
-                        </svg>
-                        <span class="text-white text-xl font-bold">AgriMarket Manager</span>
+    <div class="min-h-screen bg-gray-100">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-green-600">AgriMarket Manager</h1>
                     </div>
-                </div>
-                
-                <!-- User Info and Actions -->
-                <div class="flex items-center space-x-4">
-                    <!-- User Avatar and Name -->
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-white text-green-600 rounded-full flex items-center justify-center font-semibold text-sm">
-                            <span th:text="${name != null ? #strings.substring(name, 0, 2).toUpperCase() : 'MG'}">MG</span>
-                        </div>
-                        <span class="text-white text-sm font-medium hidden sm:block" th:text="${name ?: 'Manager'}">Manager</span>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-700" th:text="|Welcome, ${name}|">Welcome, Manager</span>
+                        <a href="/auth/logout" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Logout</a>
                     </div>
-                    
-                    <!-- Logout Button -->
-                    <a href="/auth/logout" class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                        Logout
-                    </a>
                 </div>
             </div>
-        </div>
-    </header>
+        </nav>
 
-    <div class="min-h-screen bg-gray-50 flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-white shadow-lg fixed h-full">
-            <div class="p-6">
-                <div class="flex items-center mb-8">
-                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 9 5.16-1 9-3.45 9-9V7l-10-5z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-xl font-bold text-gray-800">Manager Dashboard</h2>
+        <div class="p-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Manager Dashboard</h1>
+                    <p class="text-gray-600">Manage and monitor your AgriMarket platform</p>
                 </div>
-                
-                <nav class="space-y-2">
-                    <a href="/manager/home" class="flex items-center px-4 py-3 text-green-600 bg-green-50 rounded-lg font-medium">
-                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        Dashboard
-                    </a>
-                    
-                    <a href="/manager/users" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                        Manage Users
-                    </a>
-                    
-                    <a href="/manager/products" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"></path>
-                        </svg>
-                        Manage Products
-                    </a>
-                    
-                    <a href="/manager/sellers" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                        Manage Sellers
-                    </a>
-                    
-                    <a href="/manager/orders" class="flex items-center px-4 py-3 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        Manage Orders
-                    </a>
-                </nav>
-            </div>
-        </div>
-        
-        <!-- Main Content -->
-        <div class="ml-64 flex-1 p-8">
-            <!-- Welcome Section -->
-            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900" th:text="|Welcome back, ${name}!|">Welcome back, Manager!</h1>
-                        <p class="text-gray-600">Here's your platform overview and management tools.</p>
-                    </div>
-                    <img th:src="@{https://ui-avatars.com/api/?name={name}&background=34d399&color=fff&size=64(name=${name})}" alt="Profile" class="w-16 h-16 rounded-full border-2 border-green-200" />
-                </div>
-                
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
+
+                <!-- Management Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                                 </svg>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-blue-600">Total Users</p>
-                                <p class="text-2xl font-bold text-blue-900" th:text="${totalUsers ?: 0}">0</p>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Manage Users</h3>
+                            <p class="text-gray-600 mb-4">View and manage user accounts</p>
+                            <a href="/manager/users" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                                Manage Users
+                            </a>
                         </div>
                     </div>
-                    
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
+
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"></path>
                                 </svg>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-green-600">Total Products</p>
-                                <p class="text-2xl font-bold text-green-900" th:text="${totalProducts ?: 0}">0</p>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Manage Products</h3>
+                            <p class="text-gray-600 mb-4">Oversee product listings</p>
+                            <a href="/manager/products" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                                Manage Products
+                            </a>
                         </div>
                     </div>
-                    
-                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
+
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                 </svg>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-purple-600">Total Sellers</p>
-                                <p class="text-2xl font-bold text-purple-900" th:text="${totalSellers ?: 0}">0</p>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Manage Sellers</h3>
+                            <p class="text-gray-600 mb-4">Monitor seller accounts</p>
+                            <a href="/manager/sellers" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                                Manage Sellers
+                            </a>
                         </div>
                     </div>
-                    
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
+
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-yellow-600">Total Orders</p>
-                                <p class="text-2xl font-bold text-yellow-900" th:text="${totalOrders ?: 0}">0</p>
-                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Manage Orders</h3>
+                            <p class="text-gray-600 mb-4">Monitor platform orders</p>
+                            <a href="/manager/orders" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors">
+                                Manage Orders
+                            </a>
                         </div>
                     </div>
-                </div>
-            </div>
-                
-            <!-- Quick Actions -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <a href="/manager/users" class="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all">
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="font-medium text-gray-900">View All Users</h3>
-                            <p class="text-sm text-gray-500 mt-1">Manage user accounts</p>
-                        </div>
-                    </a>
-                    
-                    <a href="/manager/products" class="p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:shadow-md transition-all">
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4-8-4m16 0v10l-8 4-8-4V7"></path>
-                                </svg>
-                            </div>
-                            <h3 class="font-medium text-gray-900">Review Products</h3>
-                            <p class="text-sm text-gray-500 mt-1">Manage product listings</p>
-                        </div>
-                    </a>
-                    
-                    <a href="/manager/sellers" class="p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:shadow-md transition-all">
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                            </div>
-                            <h3 class="font-medium text-gray-900">Monitor Sellers</h3>
-                            <p class="text-sm text-gray-500 mt-1">Review seller accounts</p>
-                        </div>
-                    </a>
-                    
-                    <a href="/manager/orders" class="p-4 border border-gray-200 rounded-lg hover:border-yellow-300 hover:shadow-md transition-all">
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="font-medium text-gray-900">Track Orders</h3>
-                            <p class="text-sm text-gray-500 mt-1">Monitor order status</p>
-                        </div>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white ml-64">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Company Info -->
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-8 h-8 text-green-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2L2 7v10c0 5.55 3.84 10 9 9 5.16-1 9-3.45 9-9V7l-10-5z"/>
-                        </svg>
-                        <span class="text-xl font-bold">AgriMarket Manager</span>
-                    </div>
-                    <p class="text-gray-300 mb-4 max-w-md">
-                        Comprehensive platform management system for AgriMarket. Monitor users, products, sellers, and orders efficiently.
-                    </p>
-                    <p class="text-sm text-gray-400">
-                        © 2025 AgriMarket. All rights reserved.
-                    </p>
-                </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="/manager/home" class="text-gray-300 hover:text-green-400 transition-colors">
-                                Dashboard
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/manager/users" class="text-gray-300 hover:text-green-400 transition-colors">
-                                Manage Users
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/manager/products" class="text-gray-300 hover:text-green-400 transition-colors">
-                                Manage Products
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/manager/sellers" class="text-gray-300 hover:text-green-400 transition-colors">
-                                Manage Sellers
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/manager/orders" class="text-gray-300 hover:text-green-400 transition-colors">
-                                Manage Orders
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Manager Tools -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Manager Tools</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
-                                Platform Analytics
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
-                                System Reports
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
-                                User Activity Logs
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-gray-300 hover:text-green-400 transition-colors">
-                                Platform Settings
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/auth/logout" class="text-gray-300 hover:text-red-400 transition-colors">
-                                Logout
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Bottom Bar -->
-            <div class="border-t border-gray-700 mt-8 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="text-sm text-gray-400">
-                        <span>Manager Dashboard v1.0</span>
-                        <span class="mx-2">•</span>
-                        <span>Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}">21/07/2025</span></span>
-                    </div>
-                    <div class="flex items-center space-x-4 mt-4 md:mt-0">
-                        <span class="text-sm text-gray-400">Platform Status:</span>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                            <span class="text-sm text-green-400">Online</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
 </body>
 </html>
