@@ -99,6 +99,11 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findUsersByNameContainingOrEmailContaining(searchTerm, searchTerm);
         return toDTOs(users);
     }
+
+    @Override
+    public User findByID(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
     @Override
     public int countProductsBySellerId(Long sellerId) {
         return produceRepository.countByUser_Id(sellerId);

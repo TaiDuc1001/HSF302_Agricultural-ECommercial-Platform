@@ -22,4 +22,6 @@ public interface UserService {
     double sumRevenueBySellerId(Long sellerId);
     double averageRatingBySellerId(Long sellerId);
     int countReviewsBySellerId(Long sellerId);
+    public abstract User findByID(Long id);
+
 }

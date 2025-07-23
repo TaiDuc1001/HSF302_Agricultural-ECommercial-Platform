@@ -2,9 +2,11 @@ package main.controller;
 
 import main.dto.UserDTO;
 import main.enumerators.Role;
+import main.pojo.Category;
 import main.pojo.Order;
 import main.pojo.OrderDetail;
 import main.pojo.Produce;
+import main.service.category.CategoryService;
 import main.service.order.OrderService;
 import main.service.order_item.OrderDetailService;
 import main.service.produce.ProduceService;
@@ -12,10 +14,7 @@ import main.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -25,7 +24,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/seller")
 public class SellerController {
-
+    @Autowired
     UserService userService;
     @Autowired
     OrderService orderService;
@@ -33,7 +32,8 @@ public class SellerController {
     OrderDetailService orderDetailService;
     @Autowired
     ProduceService produceService;
-
+    @Autowired
+    CategoryService categoryService;
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         UserDTO user = (UserDTO) session.getAttribute("user");
@@ -140,13 +140,61 @@ public class SellerController {
     }
 
     @GetMapping("/add-product")
-    public String addProduct(HttpSession session) {
+    public String addProduct(HttpSession session, Model model) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null || !"SELLER".equals(user.getRole().toString())) {
+            return "redirect:/auth/login";
+        }
+        List<Category> category = categoryService.findAll();
+        Produce produce = new Produce();
+        model.addAttribute("categories", category);
+        model.addAttribute("product", produce);
+        return "seller/create";
+    }
+
+    @PostMapping("/add-product")
+    public String addProduct(@ModelAttribute("product") Produce produce, HttpSession session) {
         UserDTO user = (UserDTO) session.getAttribute("user");
         if (user == null || !"SELLER".equals(user.getRole().toString())) {
             return "redirect:/auth/login";
         }
 
-        return "seller/add-product";
+        produce.setIsActive(true);
+        produce.setUser(userService.findByID(user.getId()));
+        produceService.saveProduce(produce);
+        return "redirect:/seller/products";
+    }
+
+    @GetMapping("/edit-product/{id}")
+    public String editProduct(@PathVariable("id") Long id, HttpSession session, Model model) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null || !"SELLER".equals(user.getRole().toString())) {
+            return "redirect:/auth/login";
+        }
+
+        Produce produce = produceService.getProduceById(id);
+        if (produce == null || !produce.getUser().getId().equals(user.getId())) {
+            return "redirect:/seller/products";
+        }
+
+        List<Category> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("product", produce);
+        return "seller/create";
+    }
+
+    @GetMapping("/delete-product/{id}")
+    public String deleteProduct(@PathVariable("id") Long id, HttpSession session, Model model) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        if (user == null || !"SELLER".equals(user.getRole().toString())) {
+            return "redirect:/auth/login";
+        }
+
+        Produce produce = produceService.getProduceById(id);
+        if (produce != null && produce.getUser().getId().equals(user.getId())) {
+            produceService.deleteProduce(id);
+        }
+        return "redirect:/seller/products";
     }
 
     @GetMapping("/completed-orders/{id}")
@@ -181,6 +229,7 @@ public class SellerController {
         orderService.markOrderAsPaid(id);
         return "redirect:/seller/orders";
     }
+
 
     @GetMapping()
     public List<UserDTO> getAllSellers() {
